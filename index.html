@@ -145,7 +145,9 @@ body::before {
   100% { background-position:  300% center; }
 }
 .logo-ascii {
-  font-size:11px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: clamp(7px, 2.4vw, 11px);
+  letter-spacing: 0;
   background: linear-gradient(90deg,
     var(--accent2) 0%,
     var(--accent2) 35%,
@@ -157,15 +159,9 @@ body::before {
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  line-height:1.35; white-space:pre; margin-bottom:4px;
+  line-height: 1.35; white-space: pre; margin-bottom: 4px;
   animation: logo-shimmer 14s ease-in-out infinite;
-  display:block; overflow:hidden;
-}
-@media (max-width:420px) {
-  .logo-ascii { font-size:8.5px; }
-}
-@media (max-width:340px) {
-  .logo-ascii { font-size:7px; }
+  display: block; overflow-x: hidden;
 }
 .logo-sub { font-size:11px; color:var(--accent); margin-bottom:22px; }
 
@@ -481,7 +477,7 @@ function buildHome() {
 
   var lines = [
     { html: '<div class="tagline-box">회사의 일하는 방식을 바꿀 동료를 찾습니다</div>', d: 120 },
-    { html: '<div class="logo-ascii">█████╗  ███╗   ███╗ ███████╗\n██╔══██╗████╗ ████║ ██╔════╝\n███████║██╔████╔██║ ███████╗\n██╔══██║██║╚██╔╝██║ ╚════██║\n██║  ██║██║ ╚═╝ ██║ ███████║\n╚═╝  ╚═╝╚══╝   ╚══╝╚══════╝\n────────────────────────────────────\n███╗   ███╗███████╗██╗  ██╗ ██████╗\n████╗ ████║██╔════╝██║  ██║██╔════╝\n██╔████╔██║███████╗███████║██║     \n██║╚██╔╝██║╚════██║██╔══██║██║     \n██║ ╚═╝ ██║███████║██║  ██║╚██████╗\n╚══╝   ╚══╝╚══════╝╚═╝  ╚═╝ ╚═════╝</div>', d: 200 },
+    { html: '<pre class="logo-ascii">█████╗  ███╗   ███╗ ███████╗\n██╔══██╗████╗ ████║ ██╔════╝\n███████║██╔████╔██║ ███████╗\n██╔══██║██║╚██╔╝██║ ╚════██║\n██║  ██║██║ ╚═╝ ██║ ███████║\n╚═╝  ╚═╝╚══╝   ╚══╝╚══════╝\n────────────────────────────────────\n███╗   ███╗███████╗██╗  ██╗ ██████╗\n████╗ ████║██╔════╝██║  ██║██╔════╝\n██╔████╔██║███████╗███████║██║     \n██║╚██╔╝██║╚════██║██╔══██║██║     \n██║ ╚═╝ ██║███████║██║  ██║╚██████╗\n╚══╝   ╚══╝╚══════╝╚═╝  ╚═╝ ╚═════╝</pre>', d: 200 },
     { html: '<div class="logo-sub">AI Task Force 1기 모집 · 2026</div>', d: 160 },
     { html: '<div class="divider-line">1st Cohort 2026 · AI Task Force</div>', d: 140 },
     { html: '<div class="bullet-line">· 경력 · 직급 무관, 의지가 있으면 됩니다.</div>', d: 130 },
