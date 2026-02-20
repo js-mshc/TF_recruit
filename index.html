@@ -128,10 +128,11 @@ body::before {
 .hp-user { color:var(--accent); }
 
 .tagline-box {
-  display:inline-block;
+  display:block;
   border:1px solid var(--accent2); border-radius:3px;
   padding:13px 16px; margin-bottom:8px;
   font-size:14px; font-weight:700; color:var(--bright);
+  word-break:keep-all; line-height:1.7;
 }
 
 .tagline-sub {
@@ -147,9 +148,9 @@ body::before {
   font-size:11px;
   background: linear-gradient(90deg,
     var(--accent2) 0%,
-    var(--accent2) 28%,
-    #b8eeff 44%, #ffffff 50%, #b8eeff 56%,
-    var(--accent2) 72%,
+    var(--accent2) 35%,
+    #7dcfef 46%, #a8dff5 50%, #7dcfef 54%,
+    var(--accent2) 65%,
     var(--accent2) 100%
   );
   background-size: 300% auto;
@@ -157,7 +158,7 @@ body::before {
   background-clip: text;
   -webkit-text-fill-color: transparent;
   line-height:1.35; white-space:pre; margin-bottom:4px;
-  animation: logo-shimmer 6s linear infinite;
+  animation: logo-shimmer 14s ease-in-out infinite;
   display:block; overflow:hidden;
 }
 @media (max-width:420px) {
@@ -179,6 +180,7 @@ body::before {
 .bullet-line {
   font-size:13px; color:var(--text); margin-bottom:7px;
   padding-left:16px; position:relative; line-height:1.7;
+  word-break:keep-all;
 }
 .bullet-line::before { content:''; }
 .bullet-list { list-style:none; margin-bottom:20px; }
@@ -305,11 +307,10 @@ body::before {
 
 /* ── LINE REVEAL FLASH */
 @keyframes term-flash {
-  0%   { opacity:0; filter:brightness(3) saturate(1.5); }
-  20%  { opacity:1; filter:brightness(1.6); }
-  100% { opacity:1; filter:brightness(1); }
+  0%   { opacity:0; transform:translateY(6px); }
+  100% { opacity:1; transform:translateY(0); }
 }
-.term-flash { animation:term-flash 0.18s ease-out both; }
+.term-flash { animation:term-flash 0.55s cubic-bezier(0.22,0.61,0.36,1) both; }
 
 /* ── HOME CURSOR LINE */
 #home-cursor-line { margin-top:10px; min-height:22px; }
@@ -479,18 +480,18 @@ function buildHome() {
   function ta(html, delay) { typeAppend(hs, html, delay, curLine); }
 
   var lines = [
-    { html: '<div class="tagline-box">회사의 일하는 방식을 바꿀 동료를 찾습니다</div>', d: 60 },
-    { html: '<div class="logo-ascii"> █████╗  ███╗   ███╗ ███████╗\n██╔══██╗ ████╗ ████║ ██╔════╝\n███████║ ██╔████╔██║ ███████╗\n██╔══██║ ██║╚██╔╝██║ ╚════██║\n██║  ██║ ██║ ╚═╝ ██║ ███████║\n╚═╝  ╚═╝ ╚══╝   ╚══╝ ╚══════╝\n──────────────────────────────────────\n███╗   ███╗ ███████╗ ██╗  ██╗  ██████╗\n████╗ ████║ ██╔════╝ ██║  ██║ ██╔════╝\n██╔████╔██║ ███████╗ ███████║ ██║     \n██║╚██╔╝██║ ╚════██║ ██╔══██║ ██║     \n██║ ╚═╝ ██║ ███████║ ██║  ██║ ╚██████╗\n╚══╝   ╚══╝ ╚══════╝ ╚═╝  ╚═╝  ╚═════╝</div>', d: 50 },
-    { html: '<div class="logo-sub">AI Task Force 1기 모집 · 2026</div>', d: 40 },
-    { html: '<div class="divider-line">1st Cohort 2026 · AI Task Force</div>', d: 40 },
-    { html: '<div class="bullet-line">· 경력 · 직급 무관, 의지가 있으면 됩니다.</div>', d: 40 },
-    { html: '<div class="bullet-line">· 아이디어가 아닌, 실제 업무 변화를 봅니다.</div>', d: 40 },
-    { html: '<div class="bullet-line">· AI 유료 툴 + 학습비 회사 전액 지원.</div>', d: 40 },
-    { html: '<div class="bullet-line">· 모범 사례 발굴 시 전사 공유 · 인센티브 기회.</div>', d: 40 },
-    { html: '<div class="bullet-line">· 의지 있는 소수 정예로 운영 — 지원서 검토 후 엄선합니다.</div>', d: 40 },
-    { html: '<div class="countdown-wrap"><div class="cd-label">&#9200;&nbsp; 접수 마감까지</div><div class="cd-row" id="cd-row">...</div></div>', d: 45 },
-    { html: '<div class="sys-info">접수: 2026년 2월 23일(월) ~ 26일(목) 자정<br>제출: joonsung.lee@amslighting.co.kr</div>', d: 40 },
-    { html: '<div class="continue-prompt">▶ 엔터를 눌러 계속하세요</div>', d: 45 },
+    { html: '<div class="tagline-box">회사의 일하는 방식을 바꿀 동료를 찾습니다</div>', d: 120 },
+    { html: '<div class="logo-ascii">█████╗  ███╗   ███╗ ███████╗\n██╔══██╗████╗ ████║ ██╔════╝\n███████║██╔████╔██║ ███████╗\n██╔══██║██║╚██╔╝██║ ╚════██║\n██║  ██║██║ ╚═╝ ██║ ███████║\n╚═╝  ╚═╝╚══╝   ╚══╝╚══════╝\n────────────────────────────────────\n███╗   ███╗███████╗██╗  ██╗ ██████╗\n████╗ ████║██╔════╝██║  ██║██╔════╝\n██╔████╔██║███████╗███████║██║     \n██║╚██╔╝██║╚════██║██╔══██║██║     \n██║ ╚═╝ ██║███████║██║  ██║╚██████╗\n╚══╝   ╚══╝╚══════╝╚═╝  ╚═╝ ╚═════╝</div>', d: 200 },
+    { html: '<div class="logo-sub">AI Task Force 1기 모집 · 2026</div>', d: 160 },
+    { html: '<div class="divider-line">1st Cohort 2026 · AI Task Force</div>', d: 140 },
+    { html: '<div class="bullet-line">· 경력 · 직급 무관, 의지가 있으면 됩니다.</div>', d: 130 },
+    { html: '<div class="bullet-line">· 아이디어가 아닌, 실제 업무 변화를 봅니다.</div>', d: 130 },
+    { html: '<div class="bullet-line">· AI 유료 툴 + 학습비 회사 전액 지원.</div>', d: 130 },
+    { html: '<div class="bullet-line">· 모범 사례 발굴 시 전사 공유 · 인센티브 기회.</div>', d: 130 },
+    { html: '<div class="bullet-line">· 일하는 방식을 함께 바꾸고 성장하고 싶은 동료를 기다립니다.</div>', d: 130 },
+    { html: '<div class="countdown-wrap"><div class="cd-label">&#9200;&nbsp; 접수 마감까지</div><div class="cd-row" id="cd-row">...</div></div>', d: 150 },
+    { html: '<div class="sys-info">접수: 2026년 2월 23일(월) ~ 26일(목) 자정<br>제출: joonsung.lee@amslighting.co.kr</div>', d: 130 },
+    { html: '<div class="continue-prompt">▶ 엔터를 눌러 계속하세요</div>', d: 150 },
   ];
 
   for (var i = 0; i < lines.length; i++) {
@@ -607,10 +608,10 @@ H['schedule'] = function() {
 
 H['apply'] = function() {
   pOut(sHd('지원 방법'));
-  pOut('<div style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.8">아래 양식을 이메일로 작성해 제출해주세요.<br>팀장 사전 동의가 필요합니다. 지원서를 검토한 후 TF 최종 구성을 확정합니다.</div>');
+  pOut('<div style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.8">아래 양식을 이메일로 작성해 제출해주세요.<br>지원서를 검토한 후 TF 최종 구성을 확정합니다.</div>');
 
   // 선발 기준
-  pOut('<div class="box" style="margin-bottom:16px;border-left:3px solid var(--accent)"><div style="font-size:10px;color:var(--muted);margin-bottom:6px;letter-spacing:.1em">// 선발 기준</div><div style="font-size:13px;color:var(--text);line-height:1.8">의지 있는 소수 정예로 운영합니다. 지원서를 모두 검토한 후, 팀 참가 여부와 최종 인원을 결정합니다. 심사에서 선발되지 않은 팀은 이번 1기에 참가하지 않습니다.</div></div>');
+  pOut('<div class="box" style="margin-bottom:16px;border-left:3px solid var(--accent)"><div style="font-size:10px;color:var(--muted);margin-bottom:6px;letter-spacing:.1em">// 선발 기준</div><div style="font-size:13px;color:var(--text);line-height:1.8">일하는 방식을 함께 바꾸고 싶은 동료들과 소수 정예로 운영합니다. 지원서를 모두 검토한 후, 팀 참가 여부와 최종 인원을 결정합니다.</div></div>');
 
   // 1. 기본정보
   pOut('<div style="border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:12px"><div class="sec-label" style="background:var(--border);color:var(--text)">1 · 기본 정보</div><div style="padding:9px 12px;border-top:1px solid var(--border);font-size:11px;color:var(--muted)">성명 / 소속 부서 / 직급</div></div>');
@@ -631,7 +632,7 @@ H['apply'] = function() {
   pOut('<div class="q-card q-main"><div class="q-num">Q3 &nbsp;—&nbsp; 6개월 후 목표</div><div class="q-t">6개월 후 어떤 변화가 생기면 성공인가요?</div><div class="q-h">본인 업무, 팀, 또는 회사 관점 중 하나 이상으로 적어주세요.</div></div>');
 
   // Q4
-  pOut('<div class="q-card q-main"><div class="q-num">Q4 &nbsp;—&nbsp; 우려 사항</div><div class="q-t">TF 활동에서 걱정되거나 어려울 것 같은 점</div><div class="q-h">솔직하게 적을수록 좋습니다. 우려가 없다면 없다고 적어주세요.<br><span style="color:var(--muted);font-size:11px">(예: 시간이 부족할 것 같다 / AI 툴을 잘 다루지 못할 것 같다 / 업무에 바로 적용하기 어려울 것 같다 / 팀장 동의를 받기 어려울 것 같다 등)</span></div></div>');
+  pOut('<div class="q-card q-main"><div class="q-num">Q4 &nbsp;—&nbsp; 우려 사항</div><div class="q-t">TF 활동에서 걱정되거나 어려울 것 같은 점</div><div class="q-h">솔직하게 적을수록 좋습니다. 우려가 없다면 없다고 적어주세요.<br><span style="color:var(--muted);font-size:11px">(예: 시간이 부족할 것 같다 / AI 툴을 잘 다루지 못할 것 같다 / 업무에 바로 적용하기 어려울 것 같다 등)</span></div></div>');
 
   pOut('<a class="cta-link" href="mailto:joonsung.lee@amslighting.co.kr?subject=AMS AI TF 1기 지원서 - [이름] [부서]">이메일로 지원서 보내기 →</a>');
   pOut('<div style="font-size:11px;color:var(--muted);text-align:center;margin-top:6px">접수: 2월 23일(월) ~ 2월 26일(목) 자정</div>');
