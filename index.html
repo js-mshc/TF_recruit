@@ -128,11 +128,12 @@ body::before {
 .hp-user { color:var(--accent); }
 
 .tagline-box {
-  display:block;
+  display:inline-block;
   border:1px solid var(--accent2); border-radius:3px;
   padding:13px 16px; margin-bottom:8px;
   font-size:14px; font-weight:700; color:var(--bright);
   word-break:keep-all; line-height:1.7;
+  max-width:100%;
 }
 
 .tagline-sub {
@@ -163,6 +164,40 @@ body::before {
   animation: logo-shimmer 14s ease-in-out infinite;
   display: block; overflow-x: hidden;
 }
+@media (max-width: 768px) {
+  .logo-ascii { display: none; }
+}
+
+/* ── MOBILE LOGO ── */
+.logo-mobile {
+  display: none;
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+@media (max-width: 768px) {
+  .logo-mobile { display: block; }
+}
+.lm-ams, .lm-mshc {
+  display: block;
+  font-family: var(--mono);
+  font-weight: 700;
+  letter-spacing: .25em;
+  background: linear-gradient(90deg,
+    var(--accent2) 0%,
+    var(--accent2) 35%,
+    #7dcfef 46%, #a8dff5 50%, #7dcfef 54%,
+    var(--accent2) 65%,
+    var(--accent2) 100%
+  );
+  background-size: 300% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: logo-shimmer 14s ease-in-out infinite;
+}
+.lm-ams  { font-size: 38px; }
+.lm-mshc { font-size: 28px; }
+
 .logo-sub { font-size:11px; color:var(--accent); margin-bottom:22px; }
 
 .divider-line {
@@ -478,6 +513,7 @@ function buildHome() {
   var lines = [
     { html: '<div class="tagline-box">회사의 일하는 방식을 바꿀 동료를 찾습니다</div>', d: 120 },
     { html: '<pre class="logo-ascii">█████╗  ███╗   ███╗ ███████╗\n██╔══██╗████╗ ████║ ██╔════╝\n███████║██╔████╔██║ ███████╗\n██╔══██║██║╚██╔╝██║ ╚════██║\n██║  ██║██║ ╚═╝ ██║ ███████║\n╚═╝  ╚═╝╚══╝   ╚══╝╚══════╝\n────────────────────────────────────\n███╗   ███╗███████╗██╗  ██╗ ██████╗\n████╗ ████║██╔════╝██║  ██║██╔════╝\n██╔████╔██║███████╗███████║██║     \n██║╚██╔╝██║╚════██║██╔══██║██║     \n██║ ╚═╝ ██║███████║██║  ██║╚██████╗\n╚══╝   ╚══╝╚══════╝╚═╝  ╚═╝ ╚═════╝</pre>', d: 200 },
+    { html: '<div class="logo-mobile"><span class="lm-ams">AMS</span><span class="lm-mshc">MSHC</span></div>', d: 200 },
     { html: '<div class="logo-sub">AI Task Force 1기 모집 · 2026</div>', d: 160 },
     { html: '<div class="divider-line">1st Cohort 2026 · AI Task Force</div>', d: 140 },
     { html: '<div class="bullet-line">· 경력 · 직급 무관, 의지가 있으면 됩니다.</div>', d: 130 },
