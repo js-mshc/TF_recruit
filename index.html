@@ -223,6 +223,7 @@ body::before {
 @keyframes blink { 0%,49%{opacity:1} 50%,100%{opacity:.15} }
 
 /* ── CMD OUTPUT ── */
+#output { width:100%; }
 .cmd-echo { display:flex; gap:8px; align-items:center; margin:12px 0 4px; font-size:13px; }
 .ce-p { color:var(--accent); }
 .ce-c { color:var(--bright); }
@@ -556,18 +557,18 @@ H['home'] = function() {
 };
 
 H['about'] = function() {
-  var D = 55; // 각 줄 딜레이 (ms)
+  var D = 110;
 
   // ── 1-1
   pOut('<div style="margin-top:16px;font-size:11px;color:var(--accent);font-weight:700;letter-spacing:.12em">▌ 1-1. AI TF란?</div>', false, D);
-  pOut('<div style="font-size:11px;color:var(--dim)">────────────────────────────────────</div>', false, 60);
+  pOut('<div style="height:1px;background:var(--dim)"></div>', false, D);
   pOut('<div style="font-size:13px;line-height:1.95;color:var(--text)">내 업무를 AI로 바꾸고 싶은 실무자들이 모여,<br><span style="color:var(--bright);font-weight:700">회사의 일하는 방식을 함께 바꾸는 사내 선도 그룹</span>입니다.</div>', false, D);
   pOut('<div style="font-size:13px;line-height:1.95;color:var(--muted);margin-top:6px">AI 전문가를 뽑는 게 아닙니다.<br>현장을 아는 사람이 직접 써봐야 진짜 변화가 생깁니다.</div>', false, D);
   pOut('<div style="font-size:13px;line-height:2.1;margin-top:8px"><span style="color:var(--red)">✕</span>&nbsp;<span style="color:var(--muted)">AI 자격증, 수강 이력, 관심만 있는 분</span><br><span style="color:var(--green)">○</span>&nbsp;<span style="color:var(--text)">지금 당장 바꾸고 싶은 업무가 하나라도 있는 분</span></div>', false, D);
 
   // ── 1-2
   pOut('<div style="margin-top:20px;font-size:11px;color:var(--accent);font-weight:700;letter-spacing:.12em">▌ 1-2. 왜 지금인가?</div>', false, D);
-  pOut('<div style="font-size:11px;color:var(--dim)">────────────────────────────────────</div>', false, 60);
+  pOut('<div style="height:1px;background:var(--dim)"></div>', false, D);
   pOut('<div style="font-size:13px;line-height:1.95;color:var(--muted)">과거에는 업무를 자동화하려면 IT팀에 요청하고,<br>개발 일정을 기다리고, 몇 달을 써야 했습니다.</div>', false, D);
   pOut('<div style="font-size:13px;line-height:1.95;color:var(--bright);font-weight:700;margin-top:6px">지금은 현장 실무자가 직접,<br>오늘 아이디어를 내일 적용할 수 있습니다.</div>', false, D);
 
@@ -582,75 +583,77 @@ H['about'] = function() {
 H['why'] = function() { H['about'](); };
 
 H['benefits'] = function() {
-  var D = 50;
+  var D = 110;
   pOut(sHd('TF 멤버 혜택'));
-  pOut('<div style="font-size:11px;color:var(--dim)">────────────────────────────────────</div>', false, 40);
-  pOut('<div style="display:flex;gap:12px;align-items:flex-start;padding:14px 0"><span style="font-size:18px;line-height:1">⚙️</span><div><div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:4px">AI 유료 툴 구독료 지원</div><div style="font-size:12px;color:var(--muted);line-height:1.8">ChatGPT Plus, Claude Pro, Copilot 등<br>업무용 유료 AI 툴 구독료를 지원합니다.</div></div></div>', false, D);
-  pOut('<div style="height:1px;background:var(--border)"></div>', false, 40);
-  pOut('<div style="display:flex;gap:12px;align-items:flex-start;padding:14px 0"><span style="font-size:18px;line-height:1">📚</span><div><div style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:4px">학습비 지원</div><div style="font-size:12px;color:var(--muted);line-height:1.8">온라인 강의, AI 세미나, 관련 도서 구입비<br>등 자기 개발 학습비를 지원합니다.</div></div></div>', false, D);
-  pOut('<div style="height:1px;background:var(--border)"></div>', false, 40);
-  pOut('<div style="display:flex;gap:12px;align-items:flex-start;padding:14px 0"><span style="font-size:18px;line-height:1">📈</span><div><div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:4px">인사 고과 반영</div><div style="font-size:12px;color:var(--muted);line-height:1.8">TF 활동 및 성과가 연간 인사 고과에<br>정식 반영됩니다.</div></div></div>', false, D);
-  pOut('<div style="height:1px;background:var(--border)"></div>', false, 40);
-  pOut('<div style="display:flex;gap:12px;align-items:flex-start;padding:14px 0"><span style="font-size:18px;line-height:1">🚀</span><div><div style="font-size:13px;font-weight:700;color:#A78BFA;margin-bottom:4px">AI 전문가 트랙</div><div style="font-size:12px;color:var(--muted);line-height:1.8">모범 사례 발굴 시 전사 공유 기회 및<br>인센티브가 주어집니다.</div></div></div>', false, D);
-  pOut('<div style="font-size:11px;color:var(--dim)">────────────────────────────────────</div>', false, 40);
-  pOut('<div class="back-hint">Enter 로 메뉴 열기</div>');
+  pOut('<div style="height:1px;background:var(--dim)"></div>', false, D);
+  pOut('<div style="display:flex;gap:12px;align-items:flex-start;padding:14px 0;width:100%"><span style="font-size:18px;line-height:1;flex-shrink:0">⚙️</span><div><div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:4px">AI 유료 툴 구독료 지원</div><div style="font-size:12px;color:var(--muted);line-height:1.8">ChatGPT Plus, Claude Pro, Copilot 등<br>업무용 유료 AI 툴 구독료를 지원합니다.</div></div></div>', false, D);
+  pOut('<div style="height:1px;background:var(--border)"></div>', false, D);
+  pOut('<div style="display:flex;gap:12px;align-items:flex-start;padding:14px 0;width:100%"><span style="font-size:18px;line-height:1;flex-shrink:0">📚</span><div><div style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:4px">학습비 지원</div><div style="font-size:12px;color:var(--muted);line-height:1.8">온라인 강의, AI 세미나, 관련 도서 구입비<br>등 자기 개발 학습비를 지원합니다.</div></div></div>', false, D);
+  pOut('<div style="height:1px;background:var(--border)"></div>', false, D);
+  pOut('<div style="display:flex;gap:12px;align-items:flex-start;padding:14px 0;width:100%"><span style="font-size:18px;line-height:1;flex-shrink:0">📈</span><div><div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:4px">인사 고과 반영</div><div style="font-size:12px;color:var(--muted);line-height:1.8">TF 활동 및 성과가 연간 인사 고과에<br>정식 반영됩니다.</div></div></div>', false, D);
+  pOut('<div style="height:1px;background:var(--border)"></div>', false, D);
+  pOut('<div style="display:flex;gap:12px;align-items:flex-start;padding:14px 0;width:100%"><span style="font-size:18px;line-height:1;flex-shrink:0">🚀</span><div><div style="font-size:13px;font-weight:700;color:#A78BFA;margin-bottom:4px">AI 전문가 트랙</div><div style="font-size:12px;color:var(--muted);line-height:1.8">모범 사례 발굴 시 전사 공유 기회 및<br>인센티브가 주어집니다.</div></div></div>', false, D);
+  pOut('<div style="height:1px;background:var(--dim)"></div>', false, D);
+  pOut('<div class="back-hint">Enter 로 메뉴 열기</div>', false, D);
 };
 
 H['schedule'] = function() {
-  var D = 50;
+  var D = 110;
   pOut(sHd('모집 일정'));
-  pOut('<div style="font-size:11px;color:var(--dim)">────────────────────────────────────</div>', false, 40);
+  pOut('<div style="height:1px;background:var(--dim)"></div>', false, D);
 
-  pOut('<div style="display:flex;gap:14px;align-items:flex-start;padding:14px 0"><div style="flex-shrink:0;width:32px;height:32px;border:1px solid var(--border2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--accent)">01</div><div><div style="font-size:13px;font-weight:700;color:var(--bright);margin-bottom:3px">공고</div><div style="font-size:12px;color:var(--accent);margin-bottom:2px">2026년 2월 22일 (일)</div><div style="font-size:11px;color:var(--muted)">전사 공지</div></div></div>', false, D);
+  pOut('<div style="display:flex;gap:14px;align-items:flex-start;padding:14px 0;width:100%"><div style="flex-shrink:0;width:32px;height:32px;border:1px solid var(--border2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--accent)">01</div><div><div style="font-size:13px;font-weight:700;color:var(--bright);margin-bottom:3px">공고</div><div style="font-size:12px;color:var(--accent);margin-bottom:2px">2026년 2월 22일 (일)</div><div style="font-size:11px;color:var(--muted)">전사 공지</div></div></div>', false, D);
 
-  pOut('<div style="height:1px;background:var(--border)"></div>', false, 40);
+  pOut('<div style="height:1px;background:var(--border)"></div>', false, D);
 
-  pOut('<div style="display:flex;gap:14px;align-items:flex-start;padding:14px 0"><div style="flex-shrink:0;width:32px;height:32px;border:1px solid var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--gold)">02</div><div><div style="font-size:13px;font-weight:700;color:var(--bright);margin-bottom:3px">접수 기간</div><div style="font-size:12px;color:var(--gold);margin-bottom:2px">2026년 2월 23일 (월) ~ 26일 (목) 자정</div><div style="font-size:11px;color:var(--muted)">이메일 제출 &nbsp;·&nbsp; joonsung.lee@amslighting.co.kr</div></div></div>', false, D);
+  pOut('<div style="display:flex;gap:14px;align-items:flex-start;padding:14px 0;width:100%"><div style="flex-shrink:0;width:32px;height:32px;border:1px solid var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--gold)">02</div><div><div style="font-size:13px;font-weight:700;color:var(--bright);margin-bottom:3px">접수 기간</div><div style="font-size:12px;color:var(--gold);margin-bottom:2px">2026년 2월 23일 (월) ~ 26일 (목) 자정</div><div style="font-size:11px;color:var(--muted)">이메일 제출 &nbsp;·&nbsp; joonsung.lee@amslighting.co.kr</div></div></div>', false, D);
 
-  pOut('<div style="height:1px;background:var(--border)"></div>', false, 40);
+  pOut('<div style="height:1px;background:var(--border)"></div>', false, D);
 
-  pOut('<div style="display:flex;gap:14px;align-items:flex-start;padding:14px 0"><div style="flex-shrink:0;width:32px;height:32px;border:1px solid var(--accent);border-radius:50%;box-shadow:0 0 10px rgba(56,189,248,.35);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--accent)">GO</div><div><div style="font-size:13px;font-weight:700;color:var(--bright);margin-bottom:3px">활동 시작</div><div style="font-size:12px;color:var(--accent);margin-bottom:2px">추후 공지</div><div style="font-size:11px;color:var(--muted)">선발 완료 후 킥오프 일정 별도 안내</div></div></div>', false, D);
+  pOut('<div style="display:flex;gap:14px;align-items:flex-start;padding:14px 0;width:100%"><div style="flex-shrink:0;width:32px;height:32px;border:1px solid var(--accent);border-radius:50%;box-shadow:0 0 10px rgba(56,189,248,.35);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--accent)">GO</div><div><div style="font-size:13px;font-weight:700;color:var(--bright);margin-bottom:3px">활동 시작</div><div style="font-size:12px;color:var(--accent);margin-bottom:2px">추후 공지</div><div style="font-size:11px;color:var(--muted)">선발 완료 후 킥오프 일정 별도 안내</div></div></div>', false, D);
 
-  pOut('<div style="font-size:11px;color:var(--dim)">────────────────────────────────────</div>', false, 40);
+  pOut('<div style="height:1px;background:var(--dim)"></div>', false, D);
   pOut('<div style="margin-top:4px;padding:11px 14px;border-left:2px solid var(--gold);background:rgba(251,191,36,.05);font-size:12px;color:var(--gold);line-height:1.9">📌 접수: 2월 23일(월) ~ 2월 26일(목) 자정<br><span style="color:var(--muted)">✉ joonsung.lee@amslighting.co.kr</span></div>', false, D);
-  pOut('<div class="back-hint">Enter 로 메뉴 열기</div>');
+  pOut('<div class="back-hint">Enter 로 메뉴 열기</div>', false, D);
 };
 
 H['apply'] = function() {
-  pOut(sHd('지원 방법'));
-  pOut('<div style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.8">아래 양식을 이메일로 작성해 제출해주세요.<br>지원서를 검토한 후 TF 최종 구성을 확정합니다.</div>');
+  var D = 110;
+  pOut(sHd('지원 방법'), false, D);
+  pOut('<div style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.8">아래 양식을 이메일로 작성해 제출해주세요.<br>지원서를 검토한 후 TF 최종 구성을 확정합니다.</div>', false, D);
 
   // 선발 기준
-  pOut('<div class="box" style="margin-bottom:16px;border-left:3px solid var(--accent)"><div style="font-size:10px;color:var(--muted);margin-bottom:6px;letter-spacing:.1em">// 선발 기준</div><div style="font-size:13px;color:var(--text);line-height:1.8">일하는 방식을 함께 바꾸고 싶은 동료들과 소수 정예로 운영합니다. 지원서를 모두 검토한 후, 팀 참가 여부와 최종 인원을 결정합니다.</div></div>');
+  pOut('<div class="box" style="margin-bottom:16px;border-left:3px solid var(--accent)"><div style="font-size:10px;color:var(--muted);margin-bottom:6px;letter-spacing:.1em">// 선발 기준</div><div style="font-size:13px;color:var(--text);line-height:1.8">일하는 방식을 함께 바꾸고 싶은 동료들과 소수 정예로 운영합니다. 지원서를 모두 검토한 후, 팀 참가 여부와 최종 인원을 결정합니다.</div></div>', false, D);
 
   // 1. 기본정보
-  pOut('<div style="border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:12px"><div class="sec-label" style="background:var(--border);color:var(--text)">1 · 기본 정보</div><div style="padding:9px 12px;border-top:1px solid var(--border);font-size:11px;color:var(--muted)">성명 / 소속 부서 / 직급</div></div>');
+  pOut('<div style="border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:12px"><div class="sec-label" style="background:var(--border);color:var(--text)">1 · 기본 정보</div><div style="padding:9px 12px;border-top:1px solid var(--border);font-size:11px;color:var(--muted)">성명 / 소속 부서 / 직급</div></div>', false, D);
 
   // 2. AI 활용 현황
-  pOut('<div style="border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:12px"><div class="sec-label" style="background:var(--border);color:var(--text)">2 · 현재 AI 활용 현황</div><div style="padding:9px 12px;border-top:1px solid var(--border);font-size:11px;color:var(--muted)">사용 중인 도구 (없어도 OK)</div><div style="padding:9px 12px;border-top:1px solid var(--border);font-size:11px;color:var(--muted)">활용 목적 / 경험 간단히 기술</div></div>');
+  pOut('<div style="border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:12px"><div class="sec-label" style="background:var(--border);color:var(--text)">2 · 현재 AI 활용 현황</div><div style="padding:9px 12px;border-top:1px solid var(--border);font-size:11px;color:var(--muted)">사용 중인 도구 (없어도 OK)</div><div style="padding:9px 12px;border-top:1px solid var(--border);font-size:11px;color:var(--muted)">활용 목적 / 경험 간단히 기술</div></div>', false, D);
 
   // 3. 핵심 질문 헤더
-  pOut('<div class="sec-label" style="background:var(--border);color:var(--text);border-radius:4px;margin-bottom:8px">3 · 핵심 질문</div>');
+  pOut('<div class="sec-label" style="background:var(--border);color:var(--text);border-radius:4px;margin-bottom:8px">3 · 핵심 질문</div>', false, D);
 
   // Q1
-  pOut('<div class="q-card q-main"><div class="q-num">Q1 &nbsp;—&nbsp; 개선하고 싶은 업무</div><div class="q-t">개인 / 부서 / 전사 업무 중 자율적으로 최대 2개까지 작성해주세요.</div><div class="q-h">시간이 많이 걸리거나 반복적인 업무를 중심으로, AI로 어떻게 개선될 것 같은지 구체적으로 적어주세요.</div></div>');
+  pOut('<div class="q-card q-main"><div class="q-num">Q1 &nbsp;—&nbsp; 개선하고 싶은 업무</div><div class="q-t">개인 / 부서 / 전사 업무 중 자율적으로 최대 2개까지 작성해주세요.</div><div class="q-h">시간이 많이 걸리거나 반복적인 업무를 중심으로, AI로 어떻게 개선될 것 같은지 구체적으로 적어주세요.</div></div>', false, D);
 
   // Q2
-  pOut('<div class="q-card q-main"><div class="q-num">Q2 &nbsp;—&nbsp; TF 지원 동기</div><div class="q-t">AI TF에 지원하는 이유</div><div class="q-h">회사를 위해서도 좋지만, 본인이 얻고 싶은 것이 무엇인지를 중심으로 적어주세요.</div></div>');
+  pOut('<div class="q-card q-main"><div class="q-num">Q2 &nbsp;—&nbsp; TF 지원 동기</div><div class="q-t">AI TF에 지원하는 이유</div><div class="q-h">회사를 위해서도 좋지만, 본인이 얻고 싶은 것이 무엇인지를 중심으로 적어주세요.</div></div>', false, D);
 
   // Q3
-  pOut('<div class="q-card q-main"><div class="q-num">Q3 &nbsp;—&nbsp; 6개월 후 목표</div><div class="q-t">6개월 후 어떤 변화가 생기면 성공인가요?</div><div class="q-h">본인 업무, 팀, 또는 회사 관점 중 하나 이상으로 적어주세요.</div></div>');
+  pOut('<div class="q-card q-main"><div class="q-num">Q3 &nbsp;—&nbsp; 6개월 후 목표</div><div class="q-t">6개월 후 어떤 변화가 생기면 성공인가요?</div><div class="q-h">본인 업무, 팀, 또는 회사 관점 중 하나 이상으로 적어주세요.</div></div>', false, D);
 
   // Q4
-  pOut('<div class="q-card q-main"><div class="q-num">Q4 &nbsp;—&nbsp; 우려 사항</div><div class="q-t">TF 활동에서 걱정되거나 어려울 것 같은 점</div><div class="q-h">솔직하게 적을수록 좋습니다. 우려가 없다면 없다고 적어주세요.<br><span style="color:var(--muted);font-size:11px">(예: 시간이 부족할 것 같다 / AI 툴을 잘 다루지 못할 것 같다 / 업무에 바로 적용하기 어려울 것 같다 등)</span></div></div>');
+  pOut('<div class="q-card q-main"><div class="q-num">Q4 &nbsp;—&nbsp; 우려 사항</div><div class="q-t">TF 활동에서 걱정되거나 어려울 것 같은 점</div><div class="q-h">솔직하게 적을수록 좋습니다. 우려가 없다면 없다고 적어주세요.<br><span style="color:var(--muted);font-size:11px">(예: 시간이 부족할 것 같다 / AI 툴을 잘 다루지 못할 것 같다 / 업무에 바로 적용하기 어려울 것 같다 등)</span></div></div>', false, D);
 
-  pOut('<a class="cta-link" href="mailto:joonsung.lee@amslighting.co.kr?subject=AMS AI TF 1기 지원서 - [이름] [부서]">이메일로 지원서 보내기 →</a>');
-  pOut('<div style="font-size:11px;color:var(--muted);text-align:center;margin-top:6px">접수: 2월 23일(월) ~ 2월 26일(목) 자정</div>');
-  pOut('<div class="back-hint">Enter 로 메뉴 열기</div>');
+  pOut('<a class="cta-link" href="mailto:joonsung.lee@amslighting.co.kr?subject=AMS AI TF 1기 지원서 - [이름] [부서]">이메일로 지원서 보내기 →</a>', false, D);
+  pOut('<div style="font-size:11px;color:var(--muted);text-align:center;margin-top:6px">접수: 2월 23일(월) ~ 2월 26일(목) 자정</div>', false, D);
+  pOut('<div class="back-hint">Enter 로 메뉴 열기</div>', false, D);
 };
 
 H['qa'] = function() {
-  pOut(sHd('Q&A'));
+  var D = 110;
+  pOut(sHd('Q&A'), false, D);
   var items = [
     { q:'AI를 전혀 모르는데 지원해도 되나요?',     a:'됩니다. AI 기초 교육을 TF 활동 안에서 제공합니다. AI 지식보다 현장 문제의식이 중요합니다.' },
     { q:'본업이 바빠도 병행할 수 있나요?',           a:'팀장/임원과 사전 협의 후, 팀장/임원의 서포트를 받는 형태로 팀 업무와 병행에 무리 없는 범위에서 진행합니다.' },
@@ -659,9 +662,9 @@ H['qa'] = function() {
     { q:'구체적인 추진 계획은 어떻게 되나요?',       a:'선발 후 구체적인 일정은 추후 공지 예정입니다.' }
   ];
   for (var i=0;i<items.length;i++) {
-    pOut('<div class="qa-item"><div class="qa-q" onclick="this.parentElement.classList.toggle(\'open\')">Q'+(i+1)+'. '+items[i].q+'<span class="qa-arr">+</span></div><div class="qa-a">'+items[i].a+'</div></div>');
+    pOut('<div class="qa-item"><div class="qa-q" onclick="this.parentElement.classList.toggle(\'open\')">Q'+(i+1)+'. '+items[i].q+'<span class="qa-arr">+</span></div><div class="qa-a">'+items[i].a+'</div></div>', false, D);
   }
-  pOut('<div class="back-hint">Enter 로 메뉴 열기</div>');
+  pOut('<div class="back-hint">Enter 로 메뉴 열기</div>', false, D);
 };
 
 H['clear'] = function() {
