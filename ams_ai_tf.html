@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AMS AI TF 1기 모집</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0A0E1A;
+    --bg2: #0F1628;
+    --bg3: #141C34;
+    --panel: #1A2340;
+    --border: #1E2D50;
+    --accent: #0EA5E9;
+    --accent2: #38BDF8;
+    --accent3: #7DD3FC;
+    --gold: #F59E0B;
+    --green: #10B981;
+    --text: #E2E8F0;
+    --muted: #64748B;
+    --dim: #334155;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'Noto Sans KR', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    overflow-x: hidden;
+  }
+
+  /* ── 배경 그리드 ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(14,165,233,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(14,165,233,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── 네비 ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(10,14,26,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+  }
+  .nav-logo span { color: var(--muted); }
+  .nav-status {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    display: flex; gap: 20px;
+  }
+  .status-dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    margin-right: 6px;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a {
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    font-family: var(--mono);
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* ── 공통 ── */
+  section { position: relative; z-index: 1; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 40px; }
+  .tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .tag::before { content: '//'; color: var(--dim); }
+
+  /* ── 히어로 ── */
+  #hero {
+    min-height: 100vh;
+    display: flex; align-items: center;
+    padding-top: 60px;
+  }
+  .hero-inner {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 60px;
+    align-items: center;
+    width: 100%;
+  }
+  .hero-eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--gold);
+    letter-spacing: 0.2em;
+    margin-bottom: 24px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    display: block;
+    width: 40px; height: 1px;
+    background: var(--gold);
+  }
+  h1 {
+    font-size: clamp(42px, 5vw, 72px);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin-bottom: 24px;
+  }
+  h1 .line1 { color: var(--text); }
+  h1 .line2 {
+    color: var(--accent);
+    display: block;
+  }
+  h1 .line3 {
+    color: var(--muted);
+    font-weight: 300;
+    font-size: 0.6em;
+    display: block;
+    letter-spacing: 0;
+    margin-top: 8px;
+  }
+  .hero-desc {
+    font-size: 17px;
+    line-height: 1.8;
+    color: var(--muted);
+    max-width: 520px;
+    margin-bottom: 48px;
+  }
+  .hero-desc strong { color: var(--text); font-weight: 500; }
+  .hero-cta {
+    display: flex; gap: 16px; flex-wrap: wrap;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #000;
+    padding: 14px 32px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s;
+    letter-spacing: 0.05em;
+  }
+  .btn-primary:hover { background: var(--accent2); transform: translateY(-2px); }
+  .btn-outline {
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 14px 32px;
+    border-radius: 4px;
+    font-size: 14px;
+    text-decoration: none;
+    transition: all 0.2s;
+    letter-spacing: 0.05em;
+  }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* 히어로 터미널 카드 */
+  .hero-terminal {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(14,165,233,0.1);
+  }
+  .terminal-header {
+    background: var(--bg3);
+    padding: 12px 16px;
+    display: flex; align-items: center; gap: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-r { background: #FF5F57; }
+  .dot-y { background: #FEBC2E; }
+  .dot-g { background: #28C840; }
+  .terminal-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    margin-left: 8px;
+  }
+  .terminal-body { padding: 20px; font-family: var(--mono); font-size: 13px; }
+  .t-line { margin-bottom: 8px; line-height: 1.6; }
+  .t-prompt { color: var(--accent); }
+  .t-cmd { color: var(--text); }
+  .t-out { color: var(--muted); padding-left: 16px; }
+  .t-key { color: var(--gold); }
+  .t-val { color: var(--green); }
+  .t-sep { color: var(--dim); margin: 12px 0; }
+  .cursor {
+    display: inline-block;
+    width: 8px; height: 14px;
+    background: var(--accent);
+    animation: blink 1.2s infinite;
+    vertical-align: text-bottom;
+    margin-left: 2px;
+  }
+  @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+
+  /* ── 왜 TF인가 ── */
+  #why { padding: 120px 0; }
+  .why-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 60px;
+  }
+  .why-card {
+    background: var(--bg2);
+    padding: 40px 32px;
+    transition: background 0.3s;
+  }
+  .why-card:hover { background: var(--panel); }
+  .why-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--dim);
+    margin-bottom: 20px;
+  }
+  .why-card h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 12px;
+    line-height: 1.4;
+  }
+  .why-card p {
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--muted);
+  }
+  .why-card .accent-line {
+    width: 32px; height: 2px;
+    background: var(--accent);
+    margin-bottom: 20px;
+  }
+
+  /* ── 혜택 ── */
+  #benefits { padding: 120px 0; background: var(--bg2); }
+  .benefits-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    margin-bottom: 60px;
+    align-items: end;
+  }
+  .benefits-header h2 {
+    font-size: 42px;
+    font-weight: 900;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+  .benefits-header p {
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--muted);
+  }
+  .benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .benefit-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .benefit-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .benefit-card:hover { border-color: var(--accent); transform: translateY(-4px); }
+  .benefit-card:hover::before { opacity: 1; }
+  .benefit-icon {
+    font-size: 28px;
+    margin-bottom: 16px;
+  }
+  .benefit-card h4 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+  .benefit-card p {
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+  .benefit-badge {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    margin-top: 12px;
+  }
+
+  /* ── 부서 ── */
+  #departments { padding: 120px 0; }
+  .dept-intro { max-width: 600px; margin-bottom: 60px; }
+  .dept-intro h2 { font-size: 42px; font-weight: 900; letter-spacing: -0.02em; margin-bottom: 16px; }
+  .dept-intro p { font-size: 15px; color: var(--muted); line-height: 1.8; }
+  .dept-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .dept-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+  }
+  .dept-card:hover, .dept-card.active {
+    border-color: var(--accent);
+    background: var(--bg3);
+  }
+  .dept-num {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--dim);
+    margin-bottom: 10px;
+  }
+  .dept-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+  .dept-card p { font-size: 12px; color: var(--muted); line-height: 1.6; }
+  .dept-detail {
+    margin-top: 24px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 32px;
+    display: none;
+  }
+  .dept-detail.show { display: block; }
+  .dept-detail h3 { font-size: 20px; font-weight: 700; margin-bottom: 20px; }
+  .phase-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .phase-block h5 {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .phase-block.p1 h5 { color: var(--green); }
+  .phase-block.p2 h5 { color: var(--gold); }
+  .phase-block.p3 h5 { color: var(--accent); }
+  .phase-block ul { list-style: none; }
+  .phase-block ul li {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.7;
+    padding-left: 14px;
+    position: relative;
+  }
+  .phase-block ul li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--dim);
+  }
+
+  /* ── 타임라인 ── */
+  #timeline { padding: 120px 0; background: var(--bg2); }
+  .timeline-header { margin-bottom: 60px; }
+  .timeline-header h2 { font-size: 42px; font-weight: 900; letter-spacing: -0.02em; }
+  .timeline-steps {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+    position: relative;
+  }
+  .timeline-steps::before {
+    content: '';
+    position: absolute;
+    top: 32px;
+    left: 10%; right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), var(--accent), var(--border), transparent);
+  }
+  .timeline-step { text-align: center; padding: 0 16px; }
+  .step-circle {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 700;
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s;
+  }
+  .timeline-step:hover .step-circle {
+    border-color: var(--accent);
+    background: var(--panel);
+    transform: scale(1.1);
+  }
+  .step-title { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+  .step-date {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .step-desc { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+  /* ── 지원서 ── */
+  #apply { padding: 120px 0; }
+  .apply-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+  .apply-left h2 { font-size: 42px; font-weight: 900; letter-spacing: -0.02em; margin-bottom: 20px; }
+  .apply-left p { font-size: 15px; color: var(--muted); line-height: 1.8; margin-bottom: 32px; }
+  .checklist { list-style: none; }
+  .checklist li {
+    padding: 10px 0;
+    font-size: 14px;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .checklist li .ck {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 1px solid var(--dim);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 10px;
+    color: var(--accent);
+  }
+  .apply-form {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 36px;
+  }
+  .apply-form h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 24px;
+  }
+  .form-group { margin-bottom: 20px; }
+  .form-group label {
+    display: block;
+    font-size: 12px;
+    font-family: var(--mono);
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 12px 14px;
+    color: var(--text);
+    font-size: 14px;
+    font-family: var(--sans);
+    transition: border-color 0.2s;
+    outline: none;
+  }
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus { border-color: var(--accent); }
+  .form-group textarea { resize: vertical; min-height: 100px; }
+  .form-group select { appearance: none; cursor: pointer; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-hint { font-size: 11px; color: var(--dim); margin-top: 4px; }
+  .submit-btn {
+    width: 100%;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    padding: 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.05em;
+    margin-top: 8px;
+  }
+  .submit-btn:hover { background: var(--accent2); transform: translateY(-2px); }
+
+  /* ── FAQ ── */
+  #faq { padding: 120px 0; background: var(--bg2); }
+  .faq-header { margin-bottom: 60px; }
+  .faq-header h2 { font-size: 42px; font-weight: 900; letter-spacing: -0.02em; }
+  .faq-list { max-width: 760px; }
+  .faq-item {
+    border-bottom: 1px solid var(--border);
+    padding: 0;
+  }
+  .faq-q {
+    padding: 20px 0;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 20px;
+    user-select: none;
+  }
+  .faq-q:hover { color: var(--accent); }
+  .faq-arrow {
+    font-family: var(--mono);
+    font-size: 16px;
+    color: var(--muted);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+  .faq-item.open .faq-arrow { transform: rotate(45deg); }
+  .faq-a {
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--muted);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s;
+  }
+  .faq-item.open .faq-a { max-height: 300px; padding-bottom: 20px; }
+
+  /* ── 푸터 ── */
+  footer {
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    padding: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-logo { font-family: var(--mono); font-size: 13px; color: var(--muted); }
+  .footer-logo span { color: var(--accent); }
+  .footer-info { font-family: var(--mono); font-size: 11px; color: var(--dim); text-align: right; line-height: 1.8; }
+
+  /* ── 애니메이션 ── */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .fade-in.visible { opacity: 1; transform: none; }
+
+  @media (max-width: 900px) {
+    .hero-inner { grid-template-columns: 1fr; }
+    .hero-terminal { display: none; }
+    .why-grid, .benefits-grid, .dept-grid { grid-template-columns: 1fr 1fr; }
+    .timeline-steps { grid-template-columns: 1fr; }
+    .timeline-steps::before { display: none; }
+    .apply-grid { grid-template-columns: 1fr; }
+    .phase-grid { grid-template-columns: 1fr; }
+    .benefits-header { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 네비 -->
+<nav>
+  <div class="nav-logo">AMS<span>::</span>AI_TF</div>
+  <div class="nav-links">
+    <a href="#why">취지</a>
+    <a href="#benefits">혜택</a>
+    <a href="#departments">부서별</a>
+    <a href="#timeline">일정</a>
+    <a href="#apply">지원하기</a>
+  </div>
+  <div class="nav-status">
+    <span><span class="status-dot"></span>모집 진행 중</span>
+    <span>D-14</span>
+  </div>
+</nav>
+
+<!-- 히어로 -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-left fade-in">
+        <div class="hero-eyebrow">AMS Corporation  ·  2026  ·  1기 모집</div>
+        <h1>
+          <span class="line1">회사의 일하는</span>
+          <span class="line2">방식을 바꿀</span>
+          <span class="line3">동료를 찾습니다.</span>
+        </h1>
+        <p class="hero-desc">
+          AI TF는 <strong>내 업무를 더 잘 하고 싶은 사람</strong>들이 모이는 곳입니다.<br>
+          AI 전문가일 필요 없습니다. <strong>문제의식과 의지</strong>가 있으면 됩니다.<br>
+          유료 AI 툴, 학습비, 업무 시간을 회사가 전폭 지원합니다.
+        </p>
+        <div class="hero-cta">
+          <a href="#apply" class="btn-primary">지금 지원하기 →</a>
+          <a href="#why" class="btn-outline">자세히 알아보기</a>
+        </div>
+      </div>
+
+      <div class="hero-terminal fade-in">
+        <div class="terminal-header">
+          <div class="dot dot-r"></div>
+          <div class="dot dot-y"></div>
+          <div class="dot dot-g"></div>
+          <span class="terminal-title">ams-ai-tf — bash</span>
+        </div>
+        <div class="terminal-body">
+          <div class="t-line"><span class="t-prompt">ams@corp</span> <span class="t-cmd">$ cat tf_info.json</span></div>
+          <div class="t-line t-sep">─────────────────────</div>
+          <div class="t-line t-out"><span class="t-key">"name"</span>: <span class="t-val">"AI TF 1기"</span></div>
+          <div class="t-line t-out"><span class="t-key">"duration"</span>: <span class="t-val">"6개월"</span></div>
+          <div class="t-line t-out"><span class="t-key">"headcount"</span>: <span class="t-val">7</span></div>
+          <div class="t-line t-out"><span class="t-key">"leader"</span>: <span class="t-val">"CEO 직속"</span></div>
+          <div class="t-line t-out"><span class="t-key">"ai_tools"</span>: <span class="t-val">"회사 전액 지원"</span></div>
+          <div class="t-line t-out"><span class="t-key">"status"</span>: <span class="t-val" style="color:var(--green)">"OPEN"</span></div>
+          <div class="t-line t-sep">─────────────────────</div>
+          <div class="t-line"><span class="t-prompt">ams@corp</span> <span class="t-cmd">$ who_should_apply</span></div>
+          <div class="t-line t-out" style="color: var(--text)">→ 내 업무를 AI로 개선하고 싶은 사람</div>
+          <div class="t-line t-out" style="color: var(--text)">→ 직급/나이 무관, 의지가 있으면 OK</div>
+          <div class="t-line t-out" style="color: var(--text)">→ AI 경험 없어도 지원 가능</div>
+          <div class="t-line t-sep">─────────────────────</div>
+          <div class="t-line"><span class="t-prompt">ams@corp</span> <span class="t-cmd">$ <span class="cursor"></span></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 왜 TF인가 -->
+<section id="why">
+  <div class="container">
+    <div class="tag fade-in">WHY NOW</div>
+    <h2 class="fade-in" style="font-size:42px; font-weight:900; letter-spacing:-0.02em; margin-bottom:16px;">왜 지금, 왜 TF인가?</h2>
+    <p class="fade-in" style="font-size:15px; color:var(--muted); line-height:1.8; max-width:560px;">이미 일부 직원들은 ChatGPT를 개인적으로 쓰고 있습니다. 문제는 관리 체계 없이 '각자 알아서' 쓰는 것이 오히려 더 위험하다는 것입니다.</p>
+    <div class="why-grid fade-in">
+      <div class="why-card">
+        <div class="why-num">01</div>
+        <div class="accent-line"></div>
+        <h3>지금이 가장 빠른 시작점</h3>
+        <p>경쟁사들이 AI 도입을 가속하는 지금, 먼저 시작한 회사와 나중에 시작한 회사의 격차는 시간이 갈수록 커집니다. 6개월이면 눈에 보이는 성과를 만들 수 있습니다.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-num">02</div>
+        <div class="accent-line" style="background:var(--gold)"></div>
+        <h3>파편화된 AI 사용이 더 위험</h3>
+        <p>회사 기밀 자료가 외부 AI에 올라가는 사고는 '관리 없는 개인 사용'에서 발생합니다. TF는 안전하게 쓰는 방법을 만들고, 효과도 극대화합니다.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-num">03</div>
+        <div class="accent-line" style="background:var(--green)"></div>
+        <h3>실무자가 직접 만드는 변화</h3>
+        <p>AI 도입은 IT 부서 혼자 할 수 없습니다. 견적, 품질, 구매, 설계 — 각 현장을 아는 실무자가 직접 참여해야 진짜 변화가 생깁니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 혜택 -->
+<section id="benefits">
+  <div class="container">
+    <div class="benefits-header fade-in">
+      <div>
+        <div class="tag">BENEFITS</div>
+        <h2>TF 멤버에게<br>주어지는 것들</h2>
+      </div>
+      <p>AI TF는 회사를 위한 활동이기도 하지만, 무엇보다 <strong style="color:var(--text)">본인의 성장</strong>을 위한 기회입니다. 아래 혜택은 모두 선발 즉시 적용됩니다.</p>
+    </div>
+    <div class="benefits-grid fade-in">
+      <div class="benefit-card">
+        <div class="benefit-icon">🛠️</div>
+        <h4>AI 유료 툴 전액 지원</h4>
+        <p>ChatGPT Plus, Claude Pro, Microsoft Copilot 등 본인 업무에 맞는 유료 AI 툴 구독료를 회사가 지원합니다.</p>
+        <div class="benefit-badge">월 최대 10만원</div>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">📚</div>
+        <h4>학습비 지원</h4>
+        <p>온라인 강의, AI 세미나 참가비, 관련 도서 구입비 등 자기계발 학습에 드는 비용을 지원합니다.</p>
+        <div class="benefit-badge">1인 최대 20만원 / 6개월</div>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">⏱️</div>
+        <h4>업무 시간 20% 보장</h4>
+        <p>TF 활동 시간(주 1일 상당)이 정규 업무 시간으로 공식 인정됩니다. 퇴근 후 개인 시간을 쓸 필요가 없습니다.</p>
+        <div class="benefit-badge">팀장 협의 필수</div>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">🏆</div>
+        <h4>수료증 발급</h4>
+        <p>6개월 과정 완료 시 대표이사 명의의 AI TF 1기 수료증을 발급합니다. 사내 AI 전문가로서의 공식 인증입니다.</p>
+        <div class="benefit-badge">대표이사 명의</div>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">📈</div>
+        <h4>인사 고과 반영</h4>
+        <p>TF 활동 및 성과가 연간 인사 고과에 긍정적으로 반영됩니다. 성과를 낸 멤버는 추가 인센티브 대상입니다.</p>
+        <div class="benefit-badge">연간 고과 반영</div>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">🚀</div>
+        <h4>사내 AI 전문가 트랙</h4>
+        <p>수료 후 2기 멘토 및 사내 AI 강사 활동 기회가 주어집니다. 회사의 AI 여정을 이끄는 핵심 인물이 됩니다.</p>
+        <div class="benefit-badge">멘토 · 강사 기회</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 부서별 효과 -->
+<section id="departments">
+  <div class="container">
+    <div class="dept-intro fade-in">
+      <div class="tag">BY DEPARTMENT</div>
+      <h2>내 부서에서<br>AI로 무엇을 할 수 있나?</h2>
+      <p>부서를 클릭하면 즉시 효과, 중기 활용, 장기 변화를 확인할 수 있습니다.</p>
+    </div>
+    <div class="dept-grid fade-in" id="deptGrid">
+      <div class="dept-card active" data-dept="sales" onclick="showDept(this)">
+        <div class="dept-num">01</div>
+        <h4>글로벌전략팀</h4>
+        <p>영업 · 견적 원가</p>
+      </div>
+      <div class="dept-card" data-dept="prod" onclick="showDept(this)">
+        <div class="dept-num">02</div>
+        <h4>생산팀</h4>
+        <p>공정설계 · 생산관리</p>
+      </div>
+      <div class="dept-card" data-dept="rd" onclick="showDept(this)">
+        <div class="dept-num">03</div>
+        <h4>기술연구소</h4>
+        <p>광학 · 전자 · 구조 설계</p>
+      </div>
+      <div class="dept-card" data-dept="dev" onclick="showDept(this)">
+        <div class="dept-num">04</div>
+        <h4>개발팀</h4>
+        <p>금형 · PCB · 협력업체</p>
+      </div>
+      <div class="dept-card" data-dept="pur" onclick="showDept(this)">
+        <div class="dept-num">05</div>
+        <h4>구매팀</h4>
+        <p>비딩 · 조달</p>
+      </div>
+      <div class="dept-card" data-dept="qa" onclick="showDept(this)">
+        <div class="dept-num">06</div>
+        <h4>품질팀</h4>
+        <p>품질 · 클레임 대응</p>
+      </div>
+      <div class="dept-card" data-dept="log" onclick="showDept(this)">
+        <div class="dept-num">07</div>
+        <h4>판매물류팀</h4>
+        <p>EDI · 납기 · 배송</p>
+      </div>
+    </div>
+
+    <div id="deptDetail" class="dept-detail show fade-in">
+      <!-- 동적으로 채워짐 -->
+    </div>
+  </div>
+</section>
+
+<!-- 타임라인 -->
+<section id="timeline">
+  <div class="container">
+    <div class="timeline-header fade-in">
+      <div class="tag">SCHEDULE</div>
+      <h2>모집 일정</h2>
+    </div>
+    <div class="timeline-steps fade-in">
+      <div class="timeline-step">
+        <div class="step-circle">01</div>
+        <div class="step-title">공고 발표</div>
+        <div class="step-date">2026. __. __</div>
+        <div class="step-desc">전사 공지<br>공고문 배포</div>
+      </div>
+      <div class="timeline-step">
+        <div class="step-circle">02</div>
+        <div class="step-title">지원서 접수</div>
+        <div class="step-date">2주간</div>
+        <div class="step-desc">팀장 동의 후<br>서면 또는 이메일 제출</div>
+      </div>
+      <div class="timeline-step">
+        <div class="step-circle">03</div>
+        <div class="step-title">서류 검토</div>
+        <div class="step-date">마감 후 1주</div>
+        <div class="step-desc">Q1 답변 중심<br>대표이사 최종 검토</div>
+      </div>
+      <div class="timeline-step">
+        <div class="step-circle">04</div>
+        <div class="step-title">선발 발표</div>
+        <div class="step-date">마감 후 2주</div>
+        <div class="step-desc">개별 통보<br>전사 공지</div>
+      </div>
+      <div class="timeline-step">
+        <div class="step-circle" style="border-color:var(--accent); color:var(--accent); box-shadow: 0 0 20px rgba(14,165,233,0.3)">GO</div>
+        <div class="step-title">1기 활동 시작</div>
+        <div class="step-date">2026. __. __</div>
+        <div class="step-desc">킥오프 미팅<br>AI 기초 교육</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 지원하기 -->
+<section id="apply">
+  <div class="container">
+    <div class="apply-grid">
+      <div class="apply-left fade-in">
+        <div class="tag">HOW TO APPLY</div>
+        <h2>지원 방법</h2>
+        <p>아래 양식을 작성하거나, Word 지원서를 다운받아 팀장 서명 후 대표이사실에 제출해주세요.</p>
+        <ul class="checklist">
+          <li>
+            <div class="ck">✓</div>
+            지원서 작성 (아래 양식 또는 Word 파일)
+          </li>
+          <li>
+            <div class="ck">✓</div>
+            팀장 사전 동의 및 서명
+          </li>
+          <li>
+            <div class="ck">✓</div>
+            대표이사실 이메일 제출 또는 직접 제출
+          </li>
+          <li>
+            <div class="ck">✓</div>
+            궁금한 점은 대표이사실로 문의
+          </li>
+        </ul>
+        <div style="margin-top:32px; padding:20px; background:var(--panel); border:1px solid var(--border); border-radius:8px;">
+          <div style="font-family:var(--mono); font-size:11px; color:var(--muted); margin-bottom:12px;">// 선발 기준 핵심</div>
+          <p style="font-size:14px; line-height:1.8; color:var(--muted);">AI 지식이나 경험을 평가하지 않습니다.<br><strong style="color:var(--text)">"지금 내 업무에서 AI로 개선하고 싶은 것"</strong>을 구체적으로 쓸 수 있는 분을 찾습니다.</p>
+        </div>
+      </div>
+
+      <div class="apply-form fade-in">
+        <h3>온라인 사전 접수</h3>
+        <p style="font-size:13px; color:var(--muted); margin-bottom:24px;">사전 접수 후 Word 지원서를 추가 제출해주세요.</p>
+        <div class="form-row">
+          <div class="form-group">
+            <label>성명</label>
+            <input type="text" placeholder="홍길동">
+          </div>
+          <div class="form-group">
+            <label>소속 부서</label>
+            <select>
+              <option value="">부서 선택</option>
+              <option>글로벌전략팀</option>
+              <option>생산팀</option>
+              <option>기술연구소</option>
+              <option>개발팀</option>
+              <option>구매팀</option>
+              <option>품질팀</option>
+              <option>판매물류팀</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>직급</label>
+            <input type="text" placeholder="사원 / 대리 / 과장 ...">
+          </div>
+          <div class="form-group">
+            <label>연락처</label>
+            <input type="tel" placeholder="010-0000-0000">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>현재 AI 도구 사용 여부</label>
+          <select>
+            <option>사용 중 (ChatGPT 등)</option>
+            <option>예전에 써봤음</option>
+            <option>사용 경험 없음</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>AI로 개선하고 싶은 업무 (핵심 질문)</label>
+          <textarea placeholder="예) 견적서 작성에 매번 2시간이 걸리는데, 과거 자료를 참고해서 AI가 초안을 잡아주면 훨씬 빠르게 할 수 있을 것 같습니다.&#10;&#10;구체적일수록 좋습니다. AI 지식이 없어도 됩니다."></textarea>
+          <div class="form-hint">이 항목이 가장 중요합니다. AI 경험보다 현장 문제의식을 봅니다.</div>
+        </div>
+        <button class="submit-btn" onclick="handleSubmit()">사전 접수 완료 →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="container">
+    <div class="faq-header fade-in">
+      <div class="tag">FAQ</div>
+      <h2>자주 묻는 질문</h2>
+    </div>
+    <div class="faq-list fade-in">
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">AI를 전혀 모르는데 지원해도 되나요? <span class="faq-arrow">+</span></div>
+        <div class="faq-a">됩니다. TF는 AI 전문가를 뽑는 것이 아닙니다. '내 업무를 더 잘 하고 싶은 사람'이 필요합니다. AI 기초 교육을 TF 활동 안에서 제공하며, 시작 단계에서의 수준 차이는 전혀 문제가 되지 않습니다.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">본업이 바빠도 병행할 수 있나요? <span class="faq-arrow">+</span></div>
+        <div class="faq-a">TF 활동 시간(업무 시간의 약 20%)은 정규 업무 시간으로 공식 인정됩니다. 팀장과 사전 협의가 이루어지기 때문에, 추가 야근을 요구하지 않습니다. 단, 성수기나 특수한 상황에서는 탄력적으로 조정합니다.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">같은 부서에서 두 명이 지원하면 어떻게 되나요? <span class="faq-arrow">+</span></div>
+        <div class="faq-a">부서별 1명 원칙입니다. 동일 부서에서 2명 이상 지원 시 지원서(특히 Q1. 개선하고 싶은 업무) 내용을 기준으로 1명을 선발합니다. 탈락한 지원자는 2기 우선 선발 기회가 주어집니다.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">6개월 후에는 어떻게 되나요? <span class="faq-arrow">+</span></div>
+        <div class="faq-a">6개월 수료 후 원 소속 팀으로 복귀하되, 사내 AI 전문가로서 역할을 이어갑니다. 원하는 경우 2기 멘토 또는 사내 AI 강사로 활동할 수 있습니다. 성과에 따라 AI 관련 업무 전담 기회도 논의됩니다.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">팀장이 동의하지 않으면 지원이 불가능한가요? <span class="faq-arrow">+</span></div>
+        <div class="faq-a">팀장 동의가 원칙입니다. 다만, 지원 의지가 강하고 팀장 동의에 어려움이 있는 경우 대표이사실에 먼저 상담 후 진행하는 것을 권장합니다. 회사 차원에서 팀장들에게 TF 협조를 공식 요청할 예정입니다.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">결과가 없으면 어떻게 되나요? <span class="faq-arrow">+</span></div>
+        <div class="faq-a">AI 도입은 처음부터 모든 것이 잘 되지 않을 수 있습니다. TF는 '실패해도 되는 실험실'입니다. 효과가 없는 시도는 빠르게 중단하고 다른 방향을 찾는 것이 TF의 역할입니다. 실패를 두려워하지 않는 사람이 오히려 잘 맞습니다.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 푸터 -->
+<footer>
+  <div class="footer-logo">AMS<span>.</span>AI_TF  <span style="color:var(--dim)">// 1기 모집 2026</span></div>
+  <div class="footer-info">
+    문의: 대표이사실<br>
+    AMS Corporation  ·  All rights reserved
+  </div>
+</footer>
+
+<script>
+// 부서 데이터
+const deptData = {
+  sales: {
+    name: "글로벌전략팀  ·  영업 / 램프 견적 원가",
+    p1: ["고객사별 견적 이메일 AI 초안 작성", "영문 견적서·기술 자료 번역 자동화", "과거 수주 자료 기반 보고서 5분 완성", "RFQ 대응 문서 작성 시간 50% 단축"],
+    p2: ["과거 견적 데이터 학습 → 원가 자동 추정", "경쟁사 가격 동향 AI 수집·분석", "고객별 수익성 패턴 분석 → 전략 수립", "AI 기반 신규 시장 기회 탐색"],
+    p3: ["자동화 견적 시스템으로 응답 속도 3배", "데이터 기반 가격 전략 고도화", "신규 고객 발굴 AI 리서치 체계 완성", "글로벌 영업 경쟁력 확보"]
+  },
+  prod: {
+    name: "생산팀  ·  공정설계 / 생산관리 / 스케줄링",
+    p1: ["생산 일지·공정 보고서 AI 자동 작성", "작업 지시서 표준화 및 AI 초안 생성", "공정 변경 영향 범위 즉시 검토", "Teams 회의록 자동 생성·배포"],
+    p2: ["생산 데이터 기반 병목 구간 AI 탐지", "납기 지연 예측 알고리즘 구축", "최적 생산 스케줄 AI 추천 시스템", "현장 작업자 배치 효율 분석"],
+    p3: ["AI 기반 생산 스케줄 자동 최적화", "공정 이상 실시간 감지 시스템 완성", "불량 0 달성을 위한 예방 생산 체계", "스마트 팩토리 전환 기반 완성"]
+  },
+  rd: {
+    name: "기술연구소  ·  광학 / 전자 / 구조 설계  ★ AI 툴 자체 검토 완료",
+    p1: ["CATIA AI(AURA): 설계 매뉴얼 즉시 검색", "Generative Constraints: 스케치 제약 자동 예측", "AI 기반 회로 설계 오류 자동 탐지(ERC/DRC)", "설계 변경 시 타 부품 영향 AI 예측"],
+    p2: ["AI 광학 시뮬레이션으로 배광 예측 속도 10배", "CELUS로 PCB 설계 자동화", "과거 설계 데이터 학습 → 신규 설계 추천", "열해석·구조해석 보고서 AI 자동 생성"],
+    p3: ["AI 기반 램프 형상 자동 생성 설계", "시뮬레이션 전주기 자동화 플랫폼 완성", "설계 기간 30% 이상 단축", "국책 AI 특화 공동훈련센터 연계 추진"]
+  },
+  dev: {
+    name: "개발팀  ·  금형 개발 / PCB 개발 / 협력업체 관리",
+    p1: ["협력업체 발주서·사양서 AI 초안 작성", "개발 일정·이슈 보고서 자동 생성", "기존 개발품 사양서 AI 검색·비교", "외주 커뮤니케이션 문서 표준화"],
+    p2: ["금형 설계 이력 데이터 기반 문제 예측", "협력업체 개발 리스크 AI 모니터링", "개발 단계별 체크리스트 AI 자동화", "부품 수급 리스크 조기 경보"],
+    p3: ["AI 기반 개발 프로젝트 관리 체계 완성", "과거 개발 데이터 기반 신규 개발 가속", "협력업체 역량 AI 평가 시스템", "개발 실패율 지속 감소"]
+  },
+  pur: {
+    name: "구매팀  ·  비딩 / 조달 / 원자재 수급",
+    p1: ["비딩 견적서 비교 분석 AI 자동 정리", "업체별 납기 이력 데이터 즉시 조회·분석", "구매 요청서·계약서 초안 AI 작성", "가격 협상용 시장가 동향 AI 수집"],
+    p2: ["축적된 비딩 데이터 → 적정 단가 AI 예측", "납기 지연 업체 패턴 분석·사전 경보", "복수 업체 종합 평가 AI 스코어링", "원자재 가격 변동 예측 모델 구축"],
+    p3: ["AI 기반 최적 공급망 구성 시스템", "구매 단가 지속 최적화로 원가 경쟁력 강화", "공급 리스크 제로 목표 달성", "전략적 파트너십 AI 기반 관리"]
+  },
+  qa: {
+    name: "품질팀  ·  품질 관리 / 고객 클레임 대응",
+    p1: ["고객 클레임 보고서(8D) AI 초안 자동 생성", "품질 이력 유사 사례 즉시 검색·비교", "검사 체크리스트 AI 자동 업데이트", "클레임 대응 이메일 AI 초안 작성"],
+    p2: ["불량 데이터 패턴 분석 → 원인 자동 분류", "공정별 불량 발생 예측 알고리즘", "고객사별 품질 트렌드 자동 리포팅", "협력업체 품질 리스크 AI 모니터링"],
+    p3: ["AI 기반 예방 품질 관리 체계 완성", "고객 클레임 대응 시간 50% 단축", "불량률 지속 감소 → 고객 신뢰도 향상", "품질 데이터 자산화 완성"]
+  },
+  log: {
+    name: "판매물류팀  ·  EDI / 납기 / 국내외 배송",
+    p1: ["EDI 수신 데이터 자동 정리·각 팀 배포", "납기 현황 요약 보고서 AI 자동 생성", "출하 관련 고객 이메일 AI 작성", "배송 스케줄 충돌 즉시 탐지·알림"],
+    p2: ["고객 발주 패턴 분석 → 재고 수요 예측", "납기 지연 리스크 AI 조기 경보 시스템", "물류 최적 루트·비용 AI 추천", "국내외 고객사 납기 통합 대시보드"],
+    p3: ["납기 준수율 99% 이상 달성 기반 구축", "물류 비용 최적화로 수익성 개선", "고객 요구 변화 실시간 대응 체계", "AI 기반 공급망 가시성 완성"]
+  }
+};
+
+function showDept(el) {
+  document.querySelectorAll('.dept-card').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  const d = deptData[el.dataset.dept];
+  const detail = document.getElementById('deptDetail');
+  detail.innerHTML = `
+    <h3>${d.name}</h3>
+    <div class="phase-grid">
+      <div class="phase-block p1">
+        <h5>▶ 즉시 효과 (1~3개월)</h5>
+        <ul>${d.p1.map(i=>`<li>${i}</li>`).join('')}</ul>
+      </div>
+      <div class="phase-block p2">
+        <h5>▶ 중기 활용 (4~12개월)</h5>
+        <ul>${d.p2.map(i=>`<li>${i}</li>`).join('')}</ul>
+      </div>
+      <div class="phase-block p3">
+        <h5>▶ 장기 변화 (1~3년)</h5>
+        <ul>${d.p3.map(i=>`<li>${i}</li>`).join('')}</ul>
+      </div>
+    </div>
+  `;
+  detail.classList.add('show');
+}
+
+// 초기 표시
+showDept(document.querySelector('.dept-card.active'));
+
+function toggleFaq(el) {
+  el.parentElement.classList.toggle('open');
+}
+
+function handleSubmit() {
+  const btn = document.querySelector('.submit-btn');
+  btn.textContent = '✓ 접수 완료! Word 지원서도 제출해주세요.';
+  btn.style.background = 'var(--green)';
+}
+
+// 스크롤 애니메이션
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('visible'), i * 80);
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

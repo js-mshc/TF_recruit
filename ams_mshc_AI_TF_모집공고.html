@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ams — ai-tf-2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic+Coding:wght@400;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+:root {
+  --bg:      #060D1F;
+  --bg2:     #0B1530;
+  --panel:   #0D1A35;
+  --border:  #1A2F55;
+  --border2: #243F6B;
+  --accent:  #38BDF8;
+  --accent2: #0EA5E9;
+  --green:   #34D399;
+  --gold:    #FBBF24;
+  --red:     #F87171;
+  --text:    #CBD5E1;
+  --bright:  #E2E8F0;
+  --muted:   #475569;
+  --dim:     #1E3A5F;
+  --mono:    'Nanum Gothic Coding', Consolas, 'Courier New', monospace;
+}
+
+html, body {
+  width:100%; height:100%; overflow:hidden;
+  background:var(--bg); color:var(--text);
+  font-family:var(--mono); font-size:14px; line-height:1.6;
+  /* 모바일 주소창 높이 보정 */
+  height: -webkit-fill-available;
+}
+body::before {
+  content:''; position:fixed; inset:0;
+  background-image:
+    linear-gradient(rgba(56,189,248,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56,189,248,.025) 1px, transparent 1px);
+  background-size:48px 48px; pointer-events:none; z-index:0;
+}
+
+/* ── APP SHELL ── */
+#app { display:flex; flex-direction:column; height:100vh; height:100dvh; height:calc(var(--vh,1vh)*100); position:relative; z-index:1; }
+
+/* ── CHROME ── */
+#chrome {
+  background:var(--bg2); border-bottom:1px solid var(--border);
+  padding:10px 16px; display:flex; align-items:center; gap:8px; flex-shrink:0;
+}
+.dot { width:11px; height:11px; border-radius:50%; }
+.dr{background:#FF5F57} .dy{background:#FEBC2E} .dg{background:#28C840}
+.chrome-title { margin-left:8px; font-size:12px; color:var(--muted); }
+
+/* ── MAIN ── */
+#main {
+  flex:1; min-height:0; overflow-y:auto; overflow-x:hidden;
+  padding:20px 16px 76px; -webkit-overflow-scrolling:touch;
+}
+#main::-webkit-scrollbar { width:3px; }
+#main::-webkit-scrollbar-thumb { background:var(--border2); border-radius:2px; }
+#home-screen { display:block; }
+#cmd-screen  { display:none; }
+
+/* ── MENU OVERLAY — fixed above input bar ── */
+#menu-overlay {
+  display:none;
+  position:fixed;
+  left:10px; right:10px;
+  /* bottom set by JS */
+  background:#0D1A35;
+  border:1px solid var(--accent2);
+  border-radius:6px;
+  z-index:500;
+  box-shadow:0 -8px 40px rgba(0,0,0,.8), 0 0 0 1px rgba(56,189,248,.15);
+  overflow:hidden;
+}
+#menu-overlay.show { display:block; }
+
+.menu-header {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:9px 14px; border-bottom:1px solid var(--border);
+  font-size:11px;
+}
+.menu-title { color:var(--bright); font-weight:700; }
+.menu-hint  { color:var(--muted); }
+.menu-hint span { color:var(--accent); }
+
+.menu-item {
+  padding:11px 14px; display:flex; align-items:center; gap:12px;
+  cursor:pointer; border-bottom:1px solid var(--border);
+  font-size:13px; transition:background .1s;
+}
+.menu-item:last-child { border-bottom:none; }
+.menu-item.active { background:var(--accent2); }
+.menu-item.active .mi-num,
+.menu-item.active .mi-cmd,
+.menu-item.active .mi-desc { color:#000; }
+.menu-item.active .mi-cmd { font-weight:700; }
+.menu-item:not(.active):hover { background:rgba(56,189,248,.07); }
+.mi-num  { font-size:11px; color:var(--muted); min-width:24px; flex-shrink:0; }
+.mi-cmd  { color:var(--accent); font-weight:700; flex-shrink:0; }
+.mi-desc { color:var(--text); }
+
+/* ── INPUT BAR ── */
+#input-bar {
+  position:fixed; bottom:0; left:0; right:0; z-index:200;
+  border-top:1px solid var(--border); background:var(--bg2);
+  padding:11px 16px; display:flex; align-items:center; gap:10px;
+}
+.prompt-sym { color:var(--accent); font-size:14px; flex-shrink:0; font-weight:700; }
+#cmd-input {
+  flex:1; min-width:0; background:transparent; border:none; outline:none;
+  color:var(--bright); font-family:var(--mono); font-size:14px; caret-color:var(--accent);
+}
+#cmd-input::placeholder { color:var(--muted); }
+#send-btn {
+  width:34px; height:34px; background:var(--accent2); color:#000;
+  border:none; border-radius:4px; cursor:pointer; font-size:16px;
+  flex-shrink:0; display:flex; align-items:center; justify-content:center;
+  transition:opacity .15s; font-weight:700; font-family:var(--mono);
+}
+#send-btn:active { opacity:.7; }
+
+/* ── HOME CONTENT ── */
+.home-prompt { display:flex; align-items:center; gap:8px; font-size:13px; margin-bottom:18px; }
+.hp-user { color:var(--accent); }
+
+.tagline-box {
+  display:inline-block;
+  border:1px solid var(--accent2); border-radius:3px;
+  padding:13px 16px; margin-bottom:8px;
+  font-size:14px; font-weight:700; color:var(--bright);
+}
+
+.tagline-sub {
+  font-size:12px; color:var(--muted); line-height:1.8;
+  margin-bottom:22px; padding:0 2px;
+}
+
+@keyframes logo-shimmer {
+  0%   { background-position: -300% center; }
+  100% { background-position:  300% center; }
+}
+.logo-ascii {
+  font-size:11px;
+  background: linear-gradient(90deg,
+    var(--accent2) 0%,
+    var(--accent2) 28%,
+    #b8eeff 44%, #ffffff 50%, #b8eeff 56%,
+    var(--accent2) 72%,
+    var(--accent2) 100%
+  );
+  background-size: 300% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height:1.35; white-space:pre; margin-bottom:4px;
+  animation: logo-shimmer 6s linear infinite;
+  display:block; overflow:hidden;
+}
+@media (max-width:420px) {
+  .logo-ascii { font-size:8.5px; }
+}
+@media (max-width:340px) {
+  .logo-ascii { font-size:7px; }
+}
+.logo-sub { font-size:11px; color:var(--accent); margin-bottom:22px; }
+
+.divider-line {
+  display:flex; align-items:center; gap:10px;
+  margin-bottom:18px; font-size:11px; color:var(--accent2);
+}
+.divider-line::before,.divider-line::after {
+  content:''; flex:1; height:1px; background:var(--accent2); opacity:.35;
+}
+
+.bullet-line {
+  font-size:13px; color:var(--text); margin-bottom:7px;
+  padding-left:16px; position:relative; line-height:1.7;
+}
+.bullet-line::before { content:''; }
+.bullet-list { list-style:none; margin-bottom:20px; }
+.bullet-list li {
+  font-size:13px; color:var(--text); margin-bottom:7px;
+  padding-left:16px; position:relative; line-height:1.7;
+}
+.bullet-list li::before { content:'·'; position:absolute; left:0; color:var(--accent); }
+
+.countdown-wrap { margin-bottom:20px; }
+.cd-label { font-size:11px; color:var(--muted); margin-bottom:5px; }
+.cd-row   { display:flex; align-items:baseline; gap:3px; font-size:14px; }
+.cd-num   { color:var(--accent); font-weight:700; }
+.cd-unit  { color:var(--muted); font-size:11px; margin-right:6px; }
+
+.sys-info { font-size:11px; color:var(--muted); line-height:1.8; margin-bottom:20px; }
+
+.enter-prompt {
+  font-size:13px; color:var(--accent);
+  animation:blink 1.2s infinite;
+  cursor:pointer;
+  display:inline-block;
+  padding:8px 14px;
+  border:1px solid rgba(56,189,248,.3);
+  border-radius:4px;
+  margin-top:4px;
+  user-select:none;
+}
+.enter-prompt:active { background:rgba(56,189,248,.1); }
+@keyframes blink { 0%,49%{opacity:1} 50%,100%{opacity:.15} }
+
+/* ── CMD OUTPUT ── */
+.cmd-echo { display:flex; gap:8px; align-items:center; margin:12px 0 4px; font-size:13px; }
+.ce-p { color:var(--accent); }
+.ce-c { color:var(--bright); }
+
+.sh-row { display:flex; align-items:center; gap:10px; margin:4px 0 14px; }
+.sh-bar { width:2px; height:16px; background:var(--accent); border-radius:1px; flex-shrink:0; }
+.sh-text { font-size:15px; font-weight:700; color:var(--bright); }
+.sh-sub  { font-size:11px; color:var(--muted); }
+
+.card-grid  { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:10px 0; }
+.card-stack { display:flex; flex-direction:column; gap:10px; margin:10px 0; }
+@media(max-width:400px){ .card-grid{ grid-template-columns:1fr; } }
+
+.box { border:1px solid var(--border); border-radius:4px; padding:14px; background:var(--panel); }
+.box-title { font-size:12px; font-weight:700; color:var(--bright); margin-bottom:6px; }
+.box-body  { font-size:12px; color:var(--muted); line-height:1.7; }
+.box-badge { font-size:10px; color:var(--accent); margin-top:8px; }
+.box-a { border-top:2px solid var(--accent); }
+.box-g { border-top:2px solid var(--gold); }
+.box-n { border-top:2px solid var(--green); }
+.box-p { border-top:2px solid #A78BFA; }
+
+.info-table { border:1px solid var(--border); border-radius:4px; overflow:hidden; margin:10px 0; }
+.info-row { display:flex; border-bottom:1px solid var(--border); }
+.info-row:last-child { border-bottom:none; }
+.ik { width:105px; flex-shrink:0; padding:9px 12px; font-size:10px; font-weight:700; letter-spacing:.07em; color:var(--accent); border-right:1px solid var(--border); background:rgba(56,189,248,.04); }
+.iv { padding:9px 12px; font-size:13px; color:var(--text); flex:1; }
+
+.phase-table { border:1px solid var(--border); border-radius:4px; overflow:hidden; margin:10px 0; }
+.phase-row { border-bottom:1px solid var(--border); }
+.phase-row:last-child { border-bottom:none; }
+.phase-lbl { padding:8px 12px; font-size:10px; font-weight:700; letter-spacing:.08em; border-bottom:1px solid var(--dim); }
+.p1{color:var(--green)} .p2{color:var(--gold)} .p3{color:var(--accent)}
+.phase-items { padding:8px 12px 12px; }
+.phase-items li { font-size:12px; color:var(--muted); line-height:1.8; list-style:none; padding-left:12px; position:relative; }
+.phase-items li::before { content:'›'; position:absolute; left:0; color:var(--border2); }
+
+.dept-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:10px 0; }
+@media(max-width:400px){ .dept-grid{ grid-template-columns:1fr; } }
+.dept-btn { border:1px solid var(--border); border-radius:4px; padding:12px; cursor:pointer; background:var(--panel); }
+.dept-btn:active { border-color:var(--accent); }
+.db-n    { font-size:10px; color:var(--muted); margin-bottom:3px; }
+.db-name { font-size:13px; font-weight:700; color:var(--bright); margin-bottom:2px; }
+.db-sub  { font-size:10px; color:var(--muted); }
+.dept-detail { border:1px solid var(--border); border-radius:4px; overflow:hidden; display:none; margin-top:10px; }
+.dept-detail.show { display:block; }
+.dd-hdr { padding:14px; border-bottom:1px solid var(--border); font-size:13px; font-weight:700; color:var(--bright); }
+.dd-sub { font-size:11px; color:var(--muted); margin-top:2px; font-weight:400; }
+
+.tl-wrap { display:flex; position:relative; margin:16px 0; }
+.tl-wrap::before { content:''; position:absolute; top:16px; left:16px; right:16px; height:1px; background:var(--border); }
+.tl-step { flex:1; text-align:center; }
+.tl-c { width:32px; height:32px; border-radius:50%; border:1px solid var(--border2); background:var(--bg); display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-size:10px; font-weight:700; color:var(--accent); position:relative; z-index:1; }
+.tl-c.hi { border-color:var(--accent); box-shadow:0 0 10px rgba(56,189,248,.4); }
+.tl-t { font-size:11px; font-weight:700; color:var(--bright); margin-bottom:2px; }
+.tl-d { font-size:10px; color:var(--accent); margin-bottom:2px; }
+.tl-s { font-size:10px; color:var(--muted); }
+
+.alert-box { border:1px solid rgba(251,191,36,.25); border-left:3px solid var(--gold); border-radius:0 4px 4px 0; padding:12px 14px; background:rgba(251,191,36,.04); font-size:12px; color:var(--gold); margin:10px 0; }
+
+/* Q cards */
+.q-card { border:1px solid var(--border); border-radius:4px; padding:14px 16px; margin:10px 0; background:var(--panel); }
+.q-card.q-main { border-left:3px solid var(--accent); background:rgba(56,189,248,.04); }
+.q-num  { font-size:11px; font-weight:700; color:var(--accent); margin-bottom:5px; letter-spacing:.05em; }
+.q-num.m { color:var(--muted); }
+.q-t    { font-size:14px; font-weight:700; color:var(--bright); margin-bottom:6px; }
+.q-h    { font-size:12px; color:var(--muted); line-height:1.7; }
+
+.cta-link { display:block; text-align:center; background:var(--accent2); color:#000; padding:14px; border-radius:4px; text-decoration:none; font-weight:700; font-size:14px; font-family:var(--mono); margin-top:14px; }
+.cta-link:active { opacity:.8; }
+
+.err-box { border:1px solid rgba(248,113,113,.25); border-left:3px solid var(--red); border-radius:0 4px 4px 0; padding:10px 14px; background:rgba(248,113,113,.04); font-size:12px; color:var(--red); margin:6px 0; }
+
+.qa-item { border-bottom:1px solid var(--border); }
+.qa-q { padding:16px 0; font-size:13px; cursor:pointer; display:flex; justify-content:space-between; gap:14px; color:var(--text); user-select:none; }
+.qa-q:active { color:var(--accent); }
+.qa-arr { color:var(--muted); font-size:14px; flex-shrink:0; transition:transform .2s; }
+.qa-item.open .qa-arr { transform:rotate(45deg); color:var(--accent); }
+.qa-a { font-size:13px; color:var(--muted); line-height:1.8; max-height:0; overflow:hidden; transition:max-height .3s, padding .3s; }
+.qa-item.open .qa-a { max-height:300px; padding-bottom:16px; }
+
+.back-hint { font-size:11px; color:var(--muted); margin-top:14px; }
+.sec-label { font-family:var(--mono); font-size:10px; font-weight:700; letter-spacing:.1em; padding:8px 12px; }
+
+/* ── TERMINAL CURSOR */
+.term-cursor {
+  display:inline-block; width:8px; height:14px;
+  background:var(--accent); vertical-align:middle; margin-left:1px;
+  animation:cur-blink 1s step-end infinite;
+}
+@keyframes cur-blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* ── LINE REVEAL FLASH */
+@keyframes term-flash {
+  0%   { opacity:0; filter:brightness(3) saturate(1.5); }
+  20%  { opacity:1; filter:brightness(1.6); }
+  100% { opacity:1; filter:brightness(1); }
+}
+.term-flash { animation:term-flash 0.18s ease-out both; }
+
+/* ── HOME CURSOR LINE */
+#home-cursor-line { margin-top:10px; min-height:22px; }
+
+/* ── CONTINUE PROMPT */
+@keyframes slow-blink { 0%,55%{opacity:1} 70%,100%{opacity:0} }
+.continue-prompt {
+  font-size:13px; color:var(--accent); letter-spacing:.04em;
+  animation: slow-blink 2.2s ease-in-out infinite;
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div id="chrome">
+    <div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div>
+    <span class="chrome-title">ams · mshc — AI TF 2026</span>
+  </div>
+
+  <div id="main">
+    <div id="home-screen"></div>
+    <div id="cmd-screen"><div id="output"></div></div>
+  </div>
+
+  <!-- MENU OVERLAY: fixed, outside #main so it doesn't scroll -->
+  <div id="menu-overlay">
+    <div class="menu-header">
+      <span class="menu-title">명령어 선택</span>
+      <span class="menu-hint"><span>↑↓</span> 이동 &nbsp;·&nbsp; <span>↵</span> 선택 &nbsp;·&nbsp; <span>ESC</span> 닫기</span>
+    </div>
+    <div id="menu-items"></div>
+  </div>
+
+  <div id="input-bar" onclick="onInputBarClick(event)">
+    <span class="prompt-sym">&gt;</span>
+    <input id="cmd-input" autocomplete="off" spellcheck="false" placeholder="Enter 를 눌러 메뉴 열기" inputmode="text">
+    <button id="send-btn" onclick="handleSend()">&#x21A9;</button>
+  </div>
+
+</div>
+
+<script>
+// ── 메뉴 정의
+var MENU = [
+  { num:0, cmd:'home',        label:'home',        desc:'처음으로' },
+  { num:1, cmd:'about',       label:'about',       desc:'TF 소개' },
+  { num:2, cmd:'benefits',    label:'benefits',    desc:'멤버 혜택' },
+  { num:3, cmd:'schedule',    label:'schedule',    desc:'모집 일정' },
+  { num:4, cmd:'apply',       label:'apply',       desc:'지원하기' },
+  { num:5, cmd:'qa',          label:'qa',          desc:'Q&A' }
+];
+
+// ── 상태
+var inCmdMode  = false;
+var menuOpen   = false;
+var menuIdx    = 1;
+var cmdHistory = [];
+var histIdx    = -1;
+
+var DEADLINE = new Date('2026-02-27T00:00:00');
+function getCD() {
+  var diff = DEADLINE - new Date();
+  if (diff <= 0) { return { d:0,h:0,m:0,s:0,expired:true }; }
+  return { d:Math.floor(diff/86400000), h:Math.floor((diff%86400000)/3600000), m:Math.floor((diff%3600000)/60000), s:Math.floor((diff%60000)/1000), expired:false };
+}
+function pad(n) { return (n<10?'0':'')+n; }
+
+// ── 메뉴 위치 계산 (input-bar 바로 위, fixed)
+function getMenuBottom() {
+  var bar = document.getElementById('input-bar');
+  var rect = bar.getBoundingClientRect();
+  return window.innerHeight - rect.top + 4;
+}
+
+function openMenu() {
+  menuOpen = true;
+  menuIdx = 1;
+  renderMenu();
+  var overlay = document.getElementById('menu-overlay');
+  overlay.style.bottom = getMenuBottom() + 'px';
+  overlay.classList.add('show');
+}
+
+function closeMenu() {
+  menuOpen = false;
+  document.getElementById('menu-overlay').classList.remove('show');
+  document.getElementById('cmd-input').value = '';
+}
+
+function renderMenu() {
+  var container = document.getElementById('menu-items');
+  var html = '';
+  for (var i = 0; i < MENU.length; i++) {
+    var item = MENU[i];
+    var cls = (i === menuIdx) ? 'menu-item active' : 'menu-item';
+    html += '<div class="'+cls+'" onclick="menuSelect('+i+')">';
+    html += '<span class="mi-num">['+item.num+']</span>';
+    html += '<span class="mi-cmd">'+item.label+'</span>';
+    html += '<span class="mi-desc">'+item.desc+'</span>';
+    html += '</div>';
+  }
+  container.innerHTML = html;
+}
+
+function menuMoveUp()   { menuIdx = (menuIdx - 1 + MENU.length) % MENU.length; renderMenu(); }
+function menuMoveDown() { menuIdx = (menuIdx + 1) % MENU.length; renderMenu(); }
+
+function menuSelect(idx) {
+  if (idx !== undefined) { menuIdx = idx; }
+  var item = MENU[menuIdx];
+  closeMenu();
+  executeCmd(item.cmd, []);
+}
+
+// ── 타이핑 효과 ──────────────────────────────
+// queue: [{el, html, delay}] 순서대로 처리
+var typeQueue = [];
+var typeRunning = false;
+
+function typeFlush() {
+  if (typeRunning || typeQueue.length === 0) { return; }
+  typeRunning = true;
+  var item = typeQueue.shift();
+  setTimeout(function() {
+    item.el.innerHTML = item.html;
+    item.el.style.visibility = 'visible';
+    // 재등록으로 animation 재실행
+    item.el.classList.remove('term-flash');
+    void item.el.offsetWidth;
+    item.el.classList.add('term-flash');
+    var main = document.getElementById('main');
+    if (main) { main.scrollTop = main.scrollHeight; }
+    typeRunning = false;
+    typeFlush();
+  }, item.delay);
+}
+
+function typeAppend(container, html, delay, before) {
+  var d = document.createElement('div');
+  d.style.visibility = 'hidden';
+  if (before) { container.insertBefore(d, before); }
+  else { container.appendChild(d); }
+  typeQueue.push({ el: d, html: html, delay: delay || 60 });
+  typeFlush();
+}
+
+// pOut with typewriter
+function pOut(html, fast, ms) {
+  var out = document.getElementById('output');
+  typeAppend(out, html, ms !== undefined ? ms : (fast ? 20 : 85));
+}
+
+// home screen line-by-line reveal
+function buildHome() {
+  var hs = document.getElementById('home-screen');
+  hs.innerHTML = '';
+  typeQueue = [];
+  typeRunning = false;
+
+  // 커서 라인 — 항상 맨 아래 고정, 새 줄은 이 앞에 삽입됨
+  var curLine = document.createElement('div');
+  curLine.id = 'home-cursor-line';
+  curLine.innerHTML = '<span class="term-cursor"></span>';
+  hs.appendChild(curLine);
+
+  function ta(html, delay) { typeAppend(hs, html, delay, curLine); }
+
+  var lines = [
+    { html: '<div class="tagline-box">회사의 일하는 방식을 바꿀 동료를 찾습니다</div>', d: 60 },
+    { html: '<div class="logo-ascii"> █████╗  ███╗   ███╗ ███████╗\n██╔══██╗ ████╗ ████║ ██╔════╝\n███████║ ██╔████╔██║ ███████╗\n██╔══██║ ██║╚██╔╝██║ ╚════██║\n██║  ██║ ██║ ╚═╝ ██║ ███████║\n╚═╝  ╚═╝ ╚══╝   ╚══╝ ╚══════╝\n──────────────────────────────────────\n███╗   ███╗ ███████╗ ██╗  ██╗  ██████╗\n████╗ ████║ ██╔════╝ ██║  ██║ ██╔════╝\n██╔████╔██║ ███████╗ ███████║ ██║     \n██║╚██╔╝██║ ╚════██║ ██╔══██║ ██║     \n██║ ╚═╝ ██║ ███████║ ██║  ██║ ╚██████╗\n╚══╝   ╚══╝ ╚══════╝ ╚═╝  ╚═╝  ╚═════╝</div>', d: 50 },
+    { html: '<div class="logo-sub">AI Task Force 1기 모집 · 2026</div>', d: 40 },
+    { html: '<div class="divider-line">1st Cohort 2026 · AI Task Force</div>', d: 40 },
+    { html: '<div class="bullet-line">· 경력 · 직급 무관, 의지가 있으면 됩니다.</div>', d: 40 },
+    { html: '<div class="bullet-line">· 아이디어가 아닌, 실제 업무 변화를 봅니다.</div>', d: 40 },
+    { html: '<div class="bullet-line">· AI 유료 툴 + 학습비 회사 전액 지원.</div>', d: 40 },
+    { html: '<div class="bullet-line">· 모범 사례 발굴 시 전사 공유 · 인센티브 기회.</div>', d: 40 },
+    { html: '<div class="bullet-line">· 의지 있는 소수 정예로 운영 — 지원서 검토 후 엄선합니다.</div>', d: 40 },
+    { html: '<div class="countdown-wrap"><div class="cd-label">&#9200;&nbsp; 접수 마감까지</div><div class="cd-row" id="cd-row">...</div></div>', d: 45 },
+    { html: '<div class="sys-info">접수: 2026년 2월 23일(월) ~ 26일(목) 자정<br>제출: joonsung.lee@amslighting.co.kr</div>', d: 40 },
+    { html: '<div class="continue-prompt">▶ 엔터를 눌러 계속하세요</div>', d: 45 },
+  ];
+
+  for (var i = 0; i < lines.length; i++) {
+    ta(lines[i].html, lines[i].d);
+  }
+
+  // start countdown after lines appear
+  setTimeout(updateCD, 400);
+}
+
+function updateCD() {
+  var el = document.getElementById('cd-row');
+  if (!el) { return; }
+  var c = getCD();
+  if (c.expired) { el.innerHTML = '<span style="color:var(--muted)">마감되었습니다</span>'; return; }
+  el.innerHTML =
+    '<span class="cd-num">'+pad(c.d)+'</span><span class="cd-unit">일 </span>'+
+    '<span class="cd-num">'+pad(c.h)+'</span><span class="cd-unit">시 </span>'+
+    '<span class="cd-num">'+pad(c.m)+'</span><span class="cd-unit">분 </span>'+
+    '<span class="cd-num">'+pad(c.s)+'</span><span class="cd-unit">초</span>';
+}
+setInterval(updateCD, 1000);
+
+// ── CMD 모드 전환
+function goCmdMode() {
+  inCmdMode = true;
+  document.getElementById('home-screen').style.display = 'none';
+  document.getElementById('cmd-screen').style.display  = 'block';
+  document.getElementById('cmd-input').placeholder     = '명령어 입력 또는 Enter 로 메뉴';
+}
+
+// ── 출력 헬퍼
+function sHd(t, s) {
+  return '<div class="sh-row"><div class="sh-bar"></div><div class="sh-text">'+t+'</div>'+(s?'<div class="sh-sub">'+s+'</div>':'')+'</div>';
+}
+function echoCmd(cmd) {
+  pOut('<div class="cmd-echo"><span class="ce-p">user@ams:~$</span>&nbsp;<span class="ce-c">'+cmd+'</span></div>', true);
+}
+
+// ── 핸들러
+var H = {};
+
+H['home'] = function() {
+  inCmdMode = false;
+  typeQueue = []; typeRunning = false;
+  document.getElementById('home-screen').style.display = 'block';
+  document.getElementById('cmd-screen').style.display  = 'none';
+  document.getElementById('output').innerHTML = '';
+  document.getElementById('cmd-input').placeholder = 'Enter 를 눌러 메뉴 열기';
+  document.getElementById('main').scrollTop = 0;
+  buildHome();
+};
+
+H['about'] = function() {
+  var D = 55; // 각 줄 딜레이 (ms)
+
+  // ── 1-1
+  pOut('<div style="margin-top:16px;font-size:11px;color:var(--accent);font-weight:700;letter-spacing:.12em">▌ 1-1. AI TF란?</div>', false, D);
+  pOut('<div style="font-size:11px;color:var(--dim)">────────────────────────────────────</div>', false, 60);
+  pOut('<div style="font-size:13px;line-height:1.95;color:var(--text)">내 업무를 AI로 바꾸고 싶은 실무자들이 모여,<br><span style="color:var(--bright);font-weight:700">회사의 일하는 방식을 함께 바꾸는 사내 선도 그룹</span>입니다.</div>', false, D);
+  pOut('<div style="font-size:13px;line-height:1.95;color:var(--muted);margin-top:6px">AI 전문가를 뽑는 게 아닙니다.<br>현장을 아는 사람이 직접 써봐야 진짜 변화가 생깁니다.</div>', false, D);
+  pOut('<div style="font-size:13px;line-height:2.1;margin-top:8px"><span style="color:var(--red)">✕</span>&nbsp;<span style="color:var(--muted)">AI 자격증, 수강 이력, 관심만 있는 분</span><br><span style="color:var(--green)">○</span>&nbsp;<span style="color:var(--text)">지금 당장 바꾸고 싶은 업무가 하나라도 있는 분</span></div>', false, D);
+
+  // ── 1-2
+  pOut('<div style="margin-top:20px;font-size:11px;color:var(--accent);font-weight:700;letter-spacing:.12em">▌ 1-2. 왜 지금인가?</div>', false, D);
+  pOut('<div style="font-size:11px;color:var(--dim)">────────────────────────────────────</div>', false, 60);
+  pOut('<div style="font-size:13px;line-height:1.95;color:var(--muted)">과거에는 업무를 자동화하려면 IT팀에 요청하고,<br>개발 일정을 기다리고, 몇 달을 써야 했습니다.</div>', false, D);
+  pOut('<div style="font-size:13px;line-height:1.95;color:var(--bright);font-weight:700;margin-top:6px">지금은 현장 실무자가 직접,<br>오늘 아이디어를 내일 적용할 수 있습니다.</div>', false, D);
+
+  pOut('<div style="margin-top:14px;display:flex;gap:10px;align-items:baseline"><span style="color:var(--accent);font-weight:700;font-size:12px;flex-shrink:0">[01]</span><div><div style="font-size:13px;color:var(--bright);font-weight:700;margin-bottom:3px">지금이 시작점</div><div style="font-size:12px;color:var(--muted);line-height:1.8">AI를 먼저 시작한 회사와 미루는 회사의 격차는<br>갈수록 빠르게 벌어집니다.</div></div></div>', false, D);
+  pOut('<div style="margin-top:12px;display:flex;gap:10px;align-items:baseline"><span style="color:var(--gold);font-weight:700;font-size:12px;flex-shrink:0">[02]</span><div><div style="font-size:13px;color:var(--bright);font-weight:700;margin-bottom:3px">현장을 아는 사람이 필요</div><div style="font-size:12px;color:var(--muted);line-height:1.8">설계, 견적, 생산, 구매, 물류, 품질, 관리 —<br>각 현장의 실무자가 직접 참여해야 진짜 변화가 생깁니다.</div></div></div>', false, D);
+  pOut('<div style="margin-top:12px;display:flex;gap:10px;align-items:baseline"><span style="color:var(--green);font-weight:700;font-size:12px;flex-shrink:0">[03]</span><div><div style="font-size:13px;color:var(--bright);font-weight:700;margin-bottom:3px">표준과 보안이 핵심</div><div style="font-size:12px;color:var(--muted);line-height:1.8">부서마다 제각각인 AI 사용 방식을 <span style="color:var(--text)">하나의 표준으로 통합</span>하고,<br><span style="color:var(--text)">보안 가이드라인</span>을 함께 수립합니다.</div></div></div>', false, D);
+
+  pOut('<div style="margin-top:18px;padding:10px 14px;border-left:2px solid var(--accent);background:rgba(56,189,248,.05);font-size:13px;color:var(--accent)">▶&nbsp; 지금 시작하는 팀이 1년 후의 표준을 만듭니다.</div>', false, D);
+  pOut('<div class="back-hint">Enter 로 메뉴 열기</div>', false, D);
+};
+
+H['why'] = function() { H['about'](); };
+
+H['benefits'] = function() {
+  var D = 50;
+  pOut(sHd('TF 멤버 혜택'));
+  pOut('<div style="font-size:11px;color:var(--dim)">────────────────────────────────────</div>', false, 40);
+  pOut('<div style="display:flex;gap:12px;align-items:flex-start;padding:14px 0"><span style="font-size:18px;line-height:1">⚙️</span><div><div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:4px">AI 유료 툴 구독료 지원</div><div style="font-size:12px;color:var(--muted);line-height:1.8">ChatGPT Plus, Claude Pro, Copilot 등<br>업무용 유료 AI 툴 구독료를 지원합니다.</div></div></div>', false, D);
+  pOut('<div style="height:1px;background:var(--border)"></div>', false, 40);
+  pOut('<div style="display:flex;gap:12px;align-items:flex-start;padding:14px 0"><span style="font-size:18px;line-height:1">📚</span><div><div style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:4px">학습비 지원</div><div style="font-size:12px;color:var(--muted);line-height:1.8">온라인 강의, AI 세미나, 관련 도서 구입비<br>등 자기 개발 학습비를 지원합니다.</div></div></div>', false, D);
+  pOut('<div style="height:1px;background:var(--border)"></div>', false, 40);
+  pOut('<div style="display:flex;gap:12px;align-items:flex-start;padding:14px 0"><span style="font-size:18px;line-height:1">📈</span><div><div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:4px">인사 고과 반영</div><div style="font-size:12px;color:var(--muted);line-height:1.8">TF 활동 및 성과가 연간 인사 고과에<br>정식 반영됩니다.</div></div></div>', false, D);
+  pOut('<div style="height:1px;background:var(--border)"></div>', false, 40);
+  pOut('<div style="display:flex;gap:12px;align-items:flex-start;padding:14px 0"><span style="font-size:18px;line-height:1">🚀</span><div><div style="font-size:13px;font-weight:700;color:#A78BFA;margin-bottom:4px">AI 전문가 트랙</div><div style="font-size:12px;color:var(--muted);line-height:1.8">모범 사례 발굴 시 전사 공유 기회 및<br>인센티브가 주어집니다.</div></div></div>', false, D);
+  pOut('<div style="font-size:11px;color:var(--dim)">────────────────────────────────────</div>', false, 40);
+  pOut('<div class="back-hint">Enter 로 메뉴 열기</div>');
+};
+
+H['schedule'] = function() {
+  var D = 50;
+  pOut(sHd('모집 일정'));
+  pOut('<div style="font-size:11px;color:var(--dim)">────────────────────────────────────</div>', false, 40);
+
+  pOut('<div style="display:flex;gap:14px;align-items:flex-start;padding:14px 0"><div style="flex-shrink:0;width:32px;height:32px;border:1px solid var(--border2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--accent)">01</div><div><div style="font-size:13px;font-weight:700;color:var(--bright);margin-bottom:3px">공고</div><div style="font-size:12px;color:var(--accent);margin-bottom:2px">2026년 2월 22일 (일)</div><div style="font-size:11px;color:var(--muted)">전사 공지</div></div></div>', false, D);
+
+  pOut('<div style="height:1px;background:var(--border)"></div>', false, 40);
+
+  pOut('<div style="display:flex;gap:14px;align-items:flex-start;padding:14px 0"><div style="flex-shrink:0;width:32px;height:32px;border:1px solid var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--gold)">02</div><div><div style="font-size:13px;font-weight:700;color:var(--bright);margin-bottom:3px">접수 기간</div><div style="font-size:12px;color:var(--gold);margin-bottom:2px">2026년 2월 23일 (월) ~ 26일 (목) 자정</div><div style="font-size:11px;color:var(--muted)">이메일 제출 &nbsp;·&nbsp; joonsung.lee@amslighting.co.kr</div></div></div>', false, D);
+
+  pOut('<div style="height:1px;background:var(--border)"></div>', false, 40);
+
+  pOut('<div style="display:flex;gap:14px;align-items:flex-start;padding:14px 0"><div style="flex-shrink:0;width:32px;height:32px;border:1px solid var(--accent);border-radius:50%;box-shadow:0 0 10px rgba(56,189,248,.35);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--accent)">GO</div><div><div style="font-size:13px;font-weight:700;color:var(--bright);margin-bottom:3px">활동 시작</div><div style="font-size:12px;color:var(--accent);margin-bottom:2px">추후 공지</div><div style="font-size:11px;color:var(--muted)">선발 완료 후 킥오프 일정 별도 안내</div></div></div>', false, D);
+
+  pOut('<div style="font-size:11px;color:var(--dim)">────────────────────────────────────</div>', false, 40);
+  pOut('<div style="margin-top:4px;padding:11px 14px;border-left:2px solid var(--gold);background:rgba(251,191,36,.05);font-size:12px;color:var(--gold);line-height:1.9">📌 접수: 2월 23일(월) ~ 2월 26일(목) 자정<br><span style="color:var(--muted)">✉ joonsung.lee@amslighting.co.kr</span></div>', false, D);
+  pOut('<div class="back-hint">Enter 로 메뉴 열기</div>');
+};
+
+H['apply'] = function() {
+  pOut(sHd('지원 방법'));
+  pOut('<div style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.8">아래 양식을 이메일로 작성해 제출해주세요.<br>팀장 사전 동의가 필요합니다. 지원서를 검토한 후 TF 최종 구성을 확정합니다.</div>');
+
+  // 선발 기준
+  pOut('<div class="box" style="margin-bottom:16px;border-left:3px solid var(--accent)"><div style="font-size:10px;color:var(--muted);margin-bottom:6px;letter-spacing:.1em">// 선발 기준</div><div style="font-size:13px;color:var(--text);line-height:1.8">의지 있는 소수 정예로 운영합니다. 지원서를 모두 검토한 후, 팀 참가 여부와 최종 인원을 결정합니다. 심사에서 선발되지 않은 팀은 이번 1기에 참가하지 않습니다.</div></div>');
+
+  // 1. 기본정보
+  pOut('<div style="border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:12px"><div class="sec-label" style="background:var(--border);color:var(--text)">1 · 기본 정보</div><div style="padding:9px 12px;border-top:1px solid var(--border);font-size:11px;color:var(--muted)">성명 / 소속 부서 / 직급</div></div>');
+
+  // 2. AI 활용 현황
+  pOut('<div style="border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:12px"><div class="sec-label" style="background:var(--border);color:var(--text)">2 · 현재 AI 활용 현황</div><div style="padding:9px 12px;border-top:1px solid var(--border);font-size:11px;color:var(--muted)">사용 중인 도구 (없어도 OK)</div><div style="padding:9px 12px;border-top:1px solid var(--border);font-size:11px;color:var(--muted)">활용 목적 / 경험 간단히 기술</div></div>');
+
+  // 3. 핵심 질문 헤더
+  pOut('<div class="sec-label" style="background:var(--border);color:var(--text);border-radius:4px;margin-bottom:8px">3 · 핵심 질문</div>');
+
+  // Q1
+  pOut('<div class="q-card q-main"><div class="q-num">Q1 &nbsp;—&nbsp; 개선하고 싶은 업무</div><div class="q-t">개인 / 부서 / 전사 업무 중 자율적으로 최대 2개까지 작성해주세요.</div><div class="q-h">시간이 많이 걸리거나 반복적인 업무를 중심으로, AI로 어떻게 개선될 것 같은지 구체적으로 적어주세요.</div></div>');
+
+  // Q2
+  pOut('<div class="q-card q-main"><div class="q-num">Q2 &nbsp;—&nbsp; TF 지원 동기</div><div class="q-t">AI TF에 지원하는 이유</div><div class="q-h">회사를 위해서도 좋지만, 본인이 얻고 싶은 것이 무엇인지를 중심으로 적어주세요.</div></div>');
+
+  // Q3
+  pOut('<div class="q-card q-main"><div class="q-num">Q3 &nbsp;—&nbsp; 6개월 후 목표</div><div class="q-t">6개월 후 어떤 변화가 생기면 성공인가요?</div><div class="q-h">본인 업무, 팀, 또는 회사 관점 중 하나 이상으로 적어주세요.</div></div>');
+
+  // Q4
+  pOut('<div class="q-card q-main"><div class="q-num">Q4 &nbsp;—&nbsp; 우려 사항</div><div class="q-t">TF 활동에서 걱정되거나 어려울 것 같은 점</div><div class="q-h">솔직하게 적을수록 좋습니다. 우려가 없다면 없다고 적어주세요.<br><span style="color:var(--muted);font-size:11px">(예: 시간이 부족할 것 같다 / AI 툴을 잘 다루지 못할 것 같다 / 업무에 바로 적용하기 어려울 것 같다 / 팀장 동의를 받기 어려울 것 같다 등)</span></div></div>');
+
+  pOut('<a class="cta-link" href="mailto:joonsung.lee@amslighting.co.kr?subject=AMS AI TF 1기 지원서 - [이름] [부서]">이메일로 지원서 보내기 →</a>');
+  pOut('<div style="font-size:11px;color:var(--muted);text-align:center;margin-top:6px">접수: 2월 23일(월) ~ 2월 26일(목) 자정</div>');
+  pOut('<div class="back-hint">Enter 로 메뉴 열기</div>');
+};
+
+H['qa'] = function() {
+  pOut(sHd('Q&A'));
+  var items = [
+    { q:'AI를 전혀 모르는데 지원해도 되나요?',     a:'됩니다. AI 기초 교육을 TF 활동 안에서 제공합니다. AI 지식보다 현장 문제의식이 중요합니다.' },
+    { q:'본업이 바빠도 병행할 수 있나요?',           a:'팀장/임원과 사전 협의 후, 팀장/임원의 서포트를 받는 형태로 팀 업무와 병행에 무리 없는 범위에서 진행합니다.' },
+    { q:'TF 활동 이후에는 어떻게 되나요?',           a:'TF는 기존 소속팀에 소속된 채로 병행하는 활동입니다. 활동 종료 후에도 그대로 팀에서 사내 AI 전문가 역할을 이어가며, 모범 사례 발굴 시 전사 공유 기회와 인센티브가 주어집니다.' },
+    { q:'결과가 없으면 어떻게 되나요?',               a:'TF는 실패해도 되는 실험실입니다. 빠른 실험과 방향 전환이 TF의 방식입니다.' },
+    { q:'구체적인 추진 계획은 어떻게 되나요?',       a:'선발 후 구체적인 일정은 추후 공지 예정입니다.' }
+  ];
+  for (var i=0;i<items.length;i++) {
+    pOut('<div class="qa-item"><div class="qa-q" onclick="this.parentElement.classList.toggle(\'open\')">Q'+(i+1)+'. '+items[i].q+'<span class="qa-arr">+</span></div><div class="qa-a">'+items[i].a+'</div></div>');
+  }
+  pOut('<div class="back-hint">Enter 로 메뉴 열기</div>');
+};
+
+H['clear'] = function() {
+  document.getElementById('output').innerHTML = '';
+};
+
+// ── 실행
+function executeCmd(cmd, args) {
+  if (!inCmdMode && cmd !== 'home') { goCmdMode(); }
+  if (cmd !== 'home') { echoCmd(cmd); }
+  if (H[cmd]) {
+    try { H[cmd](args); } catch(e) { pOut('<div class="err-box">오류: '+e.message+'</div>'); }
+  } else {
+    pOut('<div class="err-box">알 수 없는 명령어: "'+cmd+'"</div>');
+  }
+  if (cmd !== 'home') {
+    var main = document.getElementById('main');
+    main.scrollTop = main.scrollHeight;
+  }
+}
+
+// input bar 탭/클릭 시 포커스 + 메뉴 열기
+function onInputBarClick(e) {
+  var inp = document.getElementById('cmd-input');
+  if (e.target === document.getElementById('send-btn')) { return; }
+  inp.focus();
+  if (!menuOpen && inp.value.trim() === '') {
+    if (!inCmdMode) { goCmdMode(); }
+    openMenu();
+  }
+}
+
+// ── 입력
+function handleSend() {
+  var val = document.getElementById('cmd-input').value.trim();
+
+  // 메뉴가 열려있어도 텍스트가 입력돼 있으면 텍스트 우선
+  if (menuOpen && !val) { menuSelect(); return; }
+
+  // 메뉴 닫기
+  if (menuOpen) { closeMenu(); }
+
+  if (!val) {
+    if (!inCmdMode) { goCmdMode(); }
+    openMenu();
+    return;
+  }
+  var num = parseInt(val, 10);
+  if (!isNaN(num) && num >= 0 && num < MENU.length) {
+    document.getElementById('cmd-input').value = '';
+    executeCmd(MENU[num].cmd, []);
+    return;
+  }
+  var parts = val.split(/\s+/);
+  var cmd = parts[0].toLowerCase();
+  var args = parts.slice(1);
+  if (cmdHistory[0] !== val) { cmdHistory.unshift(val); }
+  histIdx = -1;
+  document.getElementById('cmd-input').value = '';
+  if (!inCmdMode) { goCmdMode(); }
+  executeCmd(cmd, args);
+}
+
+document.getElementById('cmd-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') { e.preventDefault(); handleSend(); return; }
+  if (e.key === 'Escape') { e.preventDefault(); closeMenu(); return; }
+  if (menuOpen) {
+    if (e.key === 'ArrowUp')   { e.preventDefault(); menuMoveUp();   return; }
+    if (e.key === 'ArrowDown') { e.preventDefault(); menuMoveDown(); return; }
+    var num = parseInt(e.key, 10);
+    if (!isNaN(num) && num >= 0 && num < MENU.length) { menuSelect(num); return; }
+  } else {
+    if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (histIdx < cmdHistory.length-1) { histIdx++; document.getElementById('cmd-input').value = cmdHistory[histIdx]; }
+      return;
+    }
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (histIdx > 0) { histIdx--; document.getElementById('cmd-input').value = cmdHistory[histIdx]; }
+      else { histIdx=-1; document.getElementById('cmd-input').value=''; }
+      return;
+    }
+  }
+});
+
+document.addEventListener('keydown', function(e) {
+  var inp = document.getElementById('cmd-input');
+  if (e.key === 'Enter' && document.activeElement !== inp) {
+    e.preventDefault(); inp.focus(); handleSend();
+  }
+  if (e.key === 'Escape' && menuOpen) { closeMenu(); }
+});
+
+// 외부 탭으로 메뉴 닫기
+document.getElementById('main').addEventListener('click', function(e) {
+  if (menuOpen && !document.getElementById('menu-overlay').contains(e.target)) {
+    closeMenu();
+  }
+});
+
+// 윈도우 리사이즈 시 메뉴 위치 업데이트
+window.addEventListener('resize', function() {
+  if (menuOpen) {
+    document.getElementById('menu-overlay').style.bottom = getMenuBottom() + 'px';
+  }
+  // 모바일 주소창 높이 변화 보정
+  document.documentElement.style.setProperty('--vh', window.innerHeight * 0.01 + 'px');
+});
+
+// 초기 실행
+document.documentElement.style.setProperty('--vh', window.innerHeight * 0.01 + 'px');
+
+buildHome();
+</script>
+</body>
+</html>

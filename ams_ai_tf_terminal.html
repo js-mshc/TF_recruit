@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ams :: AI TF 1기 모집</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,700;1,400&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --bg:      #0C0E14;
+  --panel:   #111520;
+  --border:  #1C2438;
+  --accent:  #00D4FF;
+  --green:   #00FF9C;
+  --gold:    #FFB800;
+  --red:     #FF4757;
+  --purple:  #B48EFF;
+  --text:    #CDD6F4;
+  --muted:   #6C7086;
+  --dim:     #313244;
+  --mono:    'IBM Plex Mono', monospace;
+  --sans:    'Noto Sans KR', sans-serif;
+}
+
+html, body { height: 100%; overflow: hidden; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 14px;
+  line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+}
+
+/* scanline effect */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.04) 2px,
+    rgba(0,0,0,0.04) 4px
+  );
+  pointer-events: none;
+  z-index: 999;
+}
+
+/* ── TOPBAR ── */
+#topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel);
+  flex-shrink: 0;
+}
+.tb-left { display: flex; align-items: center; gap: 20px; }
+.tb-logo { color: var(--accent); font-weight: 700; font-size: 15px; letter-spacing: 0.05em; }
+.tb-logo span { color: var(--muted); }
+.tb-badge {
+  font-size: 10px;
+  color: var(--bg);
+  background: var(--green);
+  padding: 2px 8px;
+  border-radius: 2px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  animation: badge-pulse 2s infinite;
+}
+@keyframes badge-pulse {
+  0%,100% { opacity:1; } 50% { opacity:0.6; }
+}
+.tb-right { display: flex; gap: 24px; font-size: 11px; color: var(--muted); }
+.tb-stat span { color: var(--accent); }
+
+/* ── MAIN LAYOUT ── */
+#main {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ── SIDEBAR ── */
+#sidebar {
+  width: 220px;
+  border-right: 1px solid var(--border);
+  background: var(--panel);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  overflow-y: auto;
+}
+.sb-section { padding: 16px; border-bottom: 1px solid var(--border); }
+.sb-label {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.sb-cmd {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--muted);
+  transition: all 0.15s;
+  user-select: none;
+}
+.sb-cmd:hover, .sb-cmd.active {
+  background: var(--border);
+  color: var(--text);
+}
+.sb-cmd .cmd-key {
+  color: var(--accent);
+  font-size: 11px;
+}
+.sb-cmd .cmd-label { flex:1; }
+.sb-cmd .cmd-arrow { font-size: 10px; color: var(--dim); }
+.sb-dept {
+  padding: 5px 8px 5px 20px;
+  font-size: 11px;
+  color: var(--muted);
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all 0.15s;
+}
+.sb-dept:hover { color: var(--text); background: var(--border); }
+.sb-info { padding: 16px; font-size: 11px; color: var(--dim); margin-top: auto; line-height: 1.8; }
+
+/* ── TERMINAL ── */
+#terminal-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#output {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 24px;
+  scroll-behavior: smooth;
+}
+#output::-webkit-scrollbar { width: 4px; }
+#output::-webkit-scrollbar-track { background: transparent; }
+#output::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ── INPUT BAR ── */
+#input-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 24px;
+  border-top: 1px solid var(--border);
+  background: var(--panel);
+  flex-shrink: 0;
+  position: relative;
+}
+.prompt-label { color: var(--green); font-size: 13px; white-space: nowrap; }
+.prompt-label span { color: var(--muted); }
+#cmd-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 14px;
+  caret-color: var(--accent);
+}
+#cmd-input::placeholder { color: var(--dim); }
+.input-hint {
+  font-size: 11px;
+  color: var(--dim);
+  white-space: nowrap;
+}
+
+/* ── AUTOCOMPLETE ── */
+#autocomplete {
+  position: absolute;
+  bottom: 100%;
+  left: 24px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  display: none;
+  min-width: 200px;
+  box-shadow: 0 -8px 24px rgba(0,0,0,0.5);
+}
+.ac-item {
+  padding: 7px 14px;
+  font-size: 12px;
+  color: var(--muted);
+  cursor: pointer;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  transition: background 0.1s;
+}
+.ac-item:hover, .ac-item.selected {
+  background: var(--border);
+  color: var(--text);
+}
+.ac-item .ac-cmd { color: var(--accent); }
+.ac-item .ac-desc { font-size: 11px; color: var(--dim); }
+
+/* ── OUTPUT ELEMENTS ── */
+.line { margin-bottom: 2px; }
+.line-gap { margin-bottom: 14px; }
+
+.c-accent { color: var(--accent); }
+.c-green  { color: var(--green); }
+.c-gold   { color: var(--gold); }
+.c-red    { color: var(--red); }
+.c-purple { color: var(--purple); }
+.c-muted  { color: var(--muted); }
+.c-dim    { color: var(--dim); }
+.c-text   { color: var(--text); }
+.bold     { font-weight: 700; }
+.italic   { font-style: italic; }
+
+.cmd-echo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 0 6px;
+  opacity: 0.7;
+}
+.cmd-echo .echo-prompt { color: var(--green); font-size: 13px; }
+.cmd-echo .echo-cmd    { color: var(--text); }
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin: 4px 0 16px;
+}
+.sh-bar  { width: 3px; height: 18px; background: var(--accent); margin-right: 12px; border-radius: 1px; }
+.sh-text { font-size: 16px; font-weight: 700; color: var(--text); }
+.sh-sub  { font-size: 11px; color: var(--muted); margin-left: 14px; }
+
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 16px 0;
+}
+
+/* grid boxes */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin: 12px 0; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 12px 0; }
+
+.box {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 14px;
+  background: var(--panel);
+  transition: border-color 0.2s;
+}
+.box:hover { border-color: var(--dim); }
+.box-title { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.box-body  { font-size: 12px; color: var(--muted); line-height: 1.7; }
+.box-badge { font-size: 10px; color: var(--accent); margin-top: 8px; letter-spacing: 0.05em; }
+
+.benefit-box { border-top: 2px solid var(--accent); }
+.benefit-box.gold { border-top-color: var(--gold); }
+.benefit-box.green { border-top-color: var(--green); }
+.benefit-box.purple { border-top-color: var(--purple); }
+
+/* dept phase table */
+.phase-table { margin: 12px 0; }
+.phase-row {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+}
+.phase-row:last-child { border-bottom: none; }
+.phase-label {
+  padding: 10px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  border-right: 1px solid var(--border);
+}
+.phase-label.p1 { color: var(--green); }
+.phase-label.p2 { color: var(--gold); }
+.phase-label.p3 { color: var(--accent); }
+.phase-items {
+  padding: 10px 16px;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.8;
+}
+.phase-items span { display: block; }
+.phase-items span::before { content: '›  '; color: var(--dim); }
+
+/* timeline */
+.timeline { display: flex; align-items: flex-start; gap: 0; margin: 16px 0; }
+.tl-step { flex: 1; text-align: center; position: relative; }
+.tl-step::after {
+  content: '';
+  position: absolute;
+  top: 16px; left: 50%; right: -50%;
+  height: 1px;
+  background: var(--border);
+  z-index: 0;
+}
+.tl-step:last-child::after { display: none; }
+.tl-circle {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 10px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  position: relative;
+  z-index: 1;
+}
+.tl-circle.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 12px rgba(0,212,255,0.4);
+}
+.tl-title { font-size: 11px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.tl-date  { font-size: 10px; color: var(--accent); margin-bottom: 4px; }
+.tl-desc  { font-size: 10px; color: var(--muted); }
+
+/* form output */
+.form-section {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 8px 0;
+}
+.form-section-header {
+  padding: 8px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  background: var(--dim);
+  color: var(--text);
+}
+.form-section-header.accent { background: rgba(0,212,255,0.15); color: var(--accent); border-bottom: 1px solid rgba(0,212,255,0.3); }
+.form-field {
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+}
+.form-field:last-child { border-bottom: none; }
+.field-key  { font-size: 11px; color: var(--muted); min-width: 80px; flex-shrink: 0; }
+.field-val  { font-size: 12px; color: var(--text); }
+.field-hint { font-size: 11px; color: var(--dim); font-style: italic; }
+
+/* Q card */
+.q-card {
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 4px 4px 0;
+  padding: 12px 16px;
+  margin: 8px 0;
+  background: rgba(0,212,255,0.03);
+}
+.q-card.q2 { border-left-color: var(--muted); background: transparent; }
+.q-num  { font-size: 10px; color: var(--accent); letter-spacing: 0.1em; margin-bottom: 4px; }
+.q-num.muted { color: var(--muted); }
+.q-text { font-size: 13px; color: var(--text); font-weight: 500; }
+.q-hint { font-size: 11px; color: var(--muted); margin-top: 4px; font-style: italic; }
+
+/* dept button grid */
+.dept-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin: 12px 0;
+}
+.dept-btn {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+  background: var(--panel);
+}
+.dept-btn:hover { border-color: var(--accent); background: var(--border); }
+.dept-btn .db-num { font-size: 10px; color: var(--dim); margin-bottom: 4px; }
+.dept-btn .db-name { font-size: 12px; color: var(--text); font-weight: 700; margin-bottom: 2px; }
+.dept-btn .db-sub  { font-size: 10px; color: var(--muted); }
+
+/* inline link style */
+.link {
+  color: var(--accent);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.link:hover { color: var(--text); }
+
+/* boot sequence */
+.boot-line { opacity: 0; animation: fade-in 0.3s forwards; }
+@keyframes fade-in { to { opacity: 1; } }
+
+/* typing animation */
+@keyframes type-in {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+.error-box {
+  border: 1px solid rgba(255,71,87,0.3);
+  border-left: 3px solid var(--red);
+  padding: 10px 14px;
+  background: rgba(255,71,87,0.05);
+  border-radius: 0 4px 4px 0;
+  font-size: 12px;
+  color: var(--red);
+  margin: 6px 0;
+}
+
+/* welcome ASCII */
+.ascii { color: var(--accent); font-size: 11px; line-height: 1.4; white-space: pre; margin-bottom: 6px; }
+.ascii.dim { color: var(--dim); }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div id="topbar">
+  <div class="tb-left">
+    <div class="tb-logo">ams<span>::</span>AI_TF</div>
+    <div class="tb-badge">RECRUITING</div>
+    <div style="font-size:11px; color:var(--muted);">~ 2026.02.26 마감</div>
+  </div>
+  <div class="tb-right">
+    <div class="tb-stat">STATUS <span>OPEN</span></div>
+    <div class="tb-stat">HEADCOUNT <span>8</span></div>
+    <div class="tb-stat">DURATION <span>TBD</span></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+
+  <!-- SIDEBAR -->
+  <div id="sidebar">
+    <div class="sb-section">
+      <div class="sb-label">명령어</div>
+      <div class="sb-cmd active" onclick="runCmd('help')">
+        <span class="cmd-key">$</span>
+        <span class="cmd-label">help</span>
+        <span class="cmd-arrow">→</span>
+      </div>
+      <div class="sb-cmd" onclick="runCmd('about')">
+        <span class="cmd-key">$</span>
+        <span class="cmd-label">about</span>
+      </div>
+      <div class="sb-cmd" onclick="runCmd('why')">
+        <span class="cmd-key">$</span>
+        <span class="cmd-label">why</span>
+      </div>
+      <div class="sb-cmd" onclick="runCmd('benefits')">
+        <span class="cmd-key">$</span>
+        <span class="cmd-label">benefits</span>
+      </div>
+      <div class="sb-cmd" onclick="runCmd('departments')">
+        <span class="cmd-key">$</span>
+        <span class="cmd-label">departments</span>
+      </div>
+      <div class="sb-cmd" onclick="runCmd('schedule')">
+        <span class="cmd-key">$</span>
+        <span class="cmd-label">schedule</span>
+      </div>
+      <div class="sb-cmd" onclick="runCmd('apply')">
+        <span class="cmd-key">$</span>
+        <span class="cmd-label">apply</span>
+      </div>
+      <div class="sb-cmd" onclick="runCmd('qa')">
+        <span class="cmd-key">$</span>
+        <span class="cmd-label">qa</span>
+      </div>
+    </div>
+
+    <div class="sb-section">
+      <div class="sb-label">부서별 보기</div>
+      <div class="sb-dept" onclick="runCmd('dept 글로벌전략팀')">글로벌전략팀</div>
+      <div class="sb-dept" onclick="runCmd('dept 생산팀')">생산팀</div>
+      <div class="sb-dept" onclick="runCmd('dept 기술연구소')">기술연구소</div>
+      <div class="sb-dept" onclick="runCmd('dept 개발팀')">개발팀</div>
+      <div class="sb-dept" onclick="runCmd('dept 구매팀')">구매팀</div>
+      <div class="sb-dept" onclick="runCmd('dept 품질팀')">품질팀</div>
+      <div class="sb-dept" onclick="runCmd('dept 판매물류팀')">판매물류팀</div>
+      <div class="sb-dept" onclick="runCmd('dept 관리팀')">관리팀</div>
+    </div>
+
+    <div class="sb-section">
+      <div class="sb-label">빠른 실행</div>
+      <div class="sb-cmd" onclick="runCmd('clear')">
+        <span class="cmd-key">$</span>
+        <span class="cmd-label">clear</span>
+      </div>
+    </div>
+
+    <div class="sb-info">
+      ↑↓ 이전 명령어<br>
+      Tab 자동완성<br>
+      Enter 실행
+    </div>
+  </div>
+
+  <!-- TERMINAL -->
+  <div id="terminal-wrap">
+    <div id="output"></div>
+
+    <div id="autocomplete"></div>
+
+    <div id="input-bar">
+      <span class="prompt-label">ams<span>@</span>ai-tf <span style="color:var(--accent)">~</span> $</span>
+      <input id="cmd-input" autocomplete="off" spellcheck="false" placeholder="명령어를 입력하세요 (help → 시작)" />
+      <span class="input-hint">Tab: 자동완성</span>
+    </div>
+  </div>
+</div>
+
+<script>
+const output = document.getElementById('output');
+const input  = document.getElementById('cmd-input');
+const ac     = document.getElementById('autocomplete');
+
+let history = [];
+let histIdx  = -1;
+let acIdx    = -1;
+
+// ── 부서 데이터 ──────────────────────────────
+const DEPTS = {
+  '글로벌전략팀': {
+    sub: '영업 · 램프 견적 원가',
+    p1: ['고객사별 견적 이메일 AI 초안 작성', '영문 견적서·기술 자료 번역 자동화', '과거 수주 자료 기반 보고서 5분 완성', 'RFQ 대응 문서 작성 시간 50% 단축'],
+    p2: ['과거 견적 데이터 학습 → 원가 자동 추정', '경쟁사 가격 동향 AI 수집·분석', '고객별 수익성 패턴 분석 → 전략 수립', 'AI 기반 신규 시장 기회 탐색'],
+    p3: ['자동화 견적 시스템으로 응답 속도 3배', '데이터 기반 가격 전략 고도화', '신규 고객 발굴 AI 리서치 체계 완성', '글로벌 영업 경쟁력 확보']
+  },
+  '생산팀': {
+    sub: '공정설계 · 생산관리 · 스케줄링',
+    p1: ['생산 일지·공정 보고서 AI 자동 작성', '작업 지시서 표준화 및 AI 초안 생성', '공정 변경 영향 범위 즉시 검토', 'Teams 회의록 자동 생성·배포'],
+    p2: ['생산 데이터 기반 병목 구간 AI 탐지', '납기 지연 예측 알고리즘 구축', '최적 생산 스케줄 AI 추천 시스템', '현장 작업자 배치 효율 분석'],
+    p3: ['AI 기반 생산 스케줄 자동 최적화', '공정 이상 실시간 감지 시스템 완성', '불량 0 달성을 위한 예방 생산 체계', '스마트 팩토리 전환 기반 완성']
+  },
+  '기술연구소': {
+    sub: '광학 · 전자 · 구조 설계  ★ AI 툴 자체 검토 완료',
+    p1: ['CATIA AI(AURA): 설계 매뉴얼 즉시 검색', 'Generative Constraints: 스케치 제약 자동 예측', 'AI 기반 회로 설계 오류 자동 탐지(ERC/DRC)', '설계 변경 시 타 부품 영향 AI 예측'],
+    p2: ['AI 광학 시뮬레이션으로 배광 예측 속도 10배', 'CELUS로 PCB 설계 자동화', '과거 설계 데이터 학습 → 신규 설계 추천', '열해석·구조해석 보고서 AI 자동 생성'],
+    p3: ['AI 기반 램프 형상 자동 생성 설계', '시뮬레이션 전주기 자동화 플랫폼 완성', '설계 기간 30% 이상 단축', '국책 AI 특화 공동훈련센터 연계 추진']
+  },
+  '개발팀': {
+    sub: '금형 개발 · PCB 개발 · 협력업체 관리',
+    p1: ['협력업체 발주서·사양서 AI 초안 작성', '개발 일정·이슈 보고서 자동 생성', '기존 개발품 사양서 AI 검색·비교', '외주 커뮤니케이션 문서 표준화'],
+    p2: ['금형 설계 이력 데이터 기반 문제 예측', '협력업체 개발 리스크 AI 모니터링', '개발 단계별 체크리스트 AI 자동화', '부품 수급 리스크 조기 경보'],
+    p3: ['AI 기반 개발 프로젝트 관리 체계 완성', '과거 개발 데이터 기반 신규 개발 가속', '협력업체 역량 AI 평가 시스템', '개발 실패율 지속 감소']
+  },
+  '구매팀': {
+    sub: '비딩 · 조달 · 원자재 수급',
+    p1: ['비딩 견적서 비교 분석 AI 자동 정리', '업체별 납기 이력 데이터 즉시 조회·분석', '구매 요청서·계약서 초안 AI 작성', '가격 협상용 시장가 동향 AI 수집'],
+    p2: ['축적된 비딩 데이터 → 적정 단가 AI 예측', '납기 지연 업체 패턴 분석·사전 경보', '복수 업체 종합 평가 AI 스코어링', '원자재 가격 변동 예측 모델 구축'],
+    p3: ['AI 기반 최적 공급망 구성 시스템', '구매 단가 지속 최적화로 원가 경쟁력 강화', '공급 리스크 제로 목표 달성', '전략적 파트너십 AI 기반 관리']
+  },
+  '품질팀': {
+    sub: '품질 관리 · 고객 클레임 대응',
+    p1: ['고객 클레임 보고서(8D) AI 초안 자동 생성', '품질 이력 유사 사례 즉시 검색·비교', '검사 체크리스트 AI 자동 업데이트', '클레임 대응 이메일 AI 초안 작성'],
+    p2: ['불량 데이터 패턴 분석 → 원인 자동 분류', '공정별 불량 발생 예측 알고리즘', '고객사별 품질 트렌드 자동 리포팅', '협력업체 품질 리스크 AI 모니터링'],
+    p3: ['AI 기반 예방 품질 관리 체계 완성', '고객 클레임 대응 시간 50% 단축', '불량률 지속 감소 → 고객 신뢰도 향상', '품질 데이터 자산화 완성']
+  },
+  '판매물류팀': {
+    sub: 'EDI · 납기 · 국내외 배송',
+    p1: ['EDI 수신 데이터 자동 정리·각 팀 배포', '납기 현황 요약 보고서 AI 자동 생성', '출하 관련 고객 이메일 AI 작성', '배송 스케줄 충돌 즉시 탐지·알림'],
+    p2: ['고객 발주 패턴 분석 → 재고 수요 예측', '납기 지연 리스크 AI 조기 경보 시스템', '물류 최적 루트·비용 AI 추천', '국내외 고객사 납기 통합 대시보드'],
+    p3: ['납기 준수율 99% 이상 달성 기반 구축', '물류 비용 최적화로 수익성 개선', '고객 요구 변화 실시간 대응 체계', 'AI 기반 공급망 가시성 완성']
+  },
+  '관리팀': {
+    sub: '총무 · 인사 · 경영지원',
+    p1: ['반복 공문·내부 문서 AI 초안 작성', '회의록 자동 생성 및 요약·배포', '사내 규정·지침 검색 AI 챗봇 활용', '정기 보고자료 AI 자동 정리'],
+    p2: ['인사 데이터 분석 → 인력 운영 인사이트', '채용 공고·면접 자료 AI 작성 자동화', '복무·근태 이상 패턴 AI 탐지', '경영지원 자료 자동 취합·요약'],
+    p3: ['AI 기반 사내 지식 관리 시스템 구축', '인사 의사결정 데이터 기반화', '반복 행정 업무 90% 자동화', '경영진 보고 자료 실시간 생성 체계']
+  }
+};
+
+// ── 명령어 목록 ──────────────────────────────
+const COMMANDS = [
+  { cmd: 'help',        desc: '사용 가능한 명령어 목록' },
+  { cmd: 'about',       desc: 'AI TF 소개' },
+  { cmd: 'why',         desc: '설립 취지' },
+  { cmd: 'benefits',    desc: 'TF 멤버 혜택' },
+  { cmd: 'departments', desc: '부서별 AI 활용 목록' },
+  { cmd: 'dept',        desc: '특정 부서 상세 보기 (예: dept 생산팀)' },
+  { cmd: 'schedule',    desc: '모집 일정' },
+  { cmd: 'apply',       desc: '지원 방법 및 양식' },
+  { cmd: 'qa',          desc: 'Q&A' },
+  { cmd: 'clear',       desc: '화면 초기화' },
+];
+const DEPT_NAMES = Object.keys(DEPTS);
+
+// ── HTML 출력 유틸 ──────────────────────────────
+function print(html) {
+  const d = document.createElement('div');
+  d.innerHTML = html;
+  output.appendChild(d);
+  output.scrollTop = output.scrollHeight;
+}
+
+function printLines(...lines) {
+  print(lines.map(l => `<div class="line">${l}</div>`).join(''));
+}
+
+function printEcho(cmd) {
+  print(`<div class="cmd-echo"><span class="echo-prompt">ams@ai-tf ~ $</span><span class="echo-cmd">${cmd}</span></div>`);
+}
+
+function sectionHeader(title, sub='') {
+  return `<div class="section-header"><div class="sh-bar"></div><div class="sh-text">${title}</div>${sub ? `<div class="sh-sub">${sub}</div>` : ''}</div>`;
+}
+
+function divider() { return '<hr class="divider">'; }
+
+// ── 명령어 핸들러 ──────────────────────────────
+const handlers = {
+
+  help() {
+    print(sectionHeader('명령어 목록', 'Command Reference'));
+    let rows = COMMANDS.map(c =>
+      `<div class="line"><span class="c-accent" style="display:inline-block;width:140px">  ${c.cmd}</span><span class="c-muted">${c.desc}</span></div>`
+    ).join('');
+    print(rows);
+    print(`<div class="line-gap"></div>`);
+    print(`<div class="line c-muted" style="font-size:12px">  💡  <span class="link" onclick="runCmd('about')">about</span> 로 시작하거나, 왼쪽 사이드바 클릭으로도 실행됩니다.</div>`);
+  },
+
+  about() {
+    print(sectionHeader('ams AI Task Force 1기', 'About'));
+    print(`
+      <div class="grid-2">
+        <div class="box">
+          <div class="box-title c-accent">TF란?</div>
+          <div class="box-body">ams 각 부서의 실무자들이 자신의 업무에 AI를 직접 적용해보고, 그 성과를 전 직원과 공유하는 사내 AI 선도 그룹입니다.</div>
+        </div>
+        <div class="box">
+          <div class="box-title c-accent">누가 지원해야 하나?</div>
+          <div class="box-body">AI 전문가일 필요 없습니다. <span class="c-text bold">내 업무를 더 잘 하고 싶은 의지</span>가 있는 분이라면 직급·나이 무관하게 지원 가능합니다.</div>
+        </div>
+      </div>
+    `);
+    const info = [
+      ['STATUS',     '<span class="c-green bold">OPEN</span>'],
+      ['HEADCOUNT',  '<span class="c-text">부서별 1명 · 총 8명</span>'],
+      ['DURATION',   '<span class="c-gold">추후 공지</span>'],
+      ['LEADER',     '<span class="c-text">대표이사 직속</span>'],
+      ['AI TOOLS',   '<span class="c-accent">회사 전액 지원</span>'],
+      ['DEADLINE',   '<span class="c-red bold">2026. 02. 26</span>'],
+    ];
+    const rows = info.map(([k,v]) =>
+      `<div class="phase-row"><div class="phase-label p1" style="font-size:10px">${k}</div><div class="phase-items" style="font-size:13px">${v}</div></div>`
+    ).join('');
+    print(`<div class="phase-table" style="margin-top:12px">${rows}</div>`);
+    print(`<div class="line c-muted" style="margin-top:14px; font-size:12px">→ <span class="link" onclick="runCmd('benefits')">benefits</span> — 혜택 보기 &nbsp;|&nbsp; <span class="link" onclick="runCmd('apply')">apply</span> — 지원하기</div>`);
+  },
+
+  why() {
+    print(sectionHeader('왜 지금, 왜 TF인가?', 'Rationale'));
+    print(`
+      <div class="grid-3">
+        <div class="box">
+          <div class="box-title"><span class="c-accent">01</span> &nbsp;지금이 시작점</div>
+          <div class="box-body">AI를 먼저 시작한 회사와 미루는 회사의 격차는 시간이 갈수록 빠르게 벌어집니다. 지금 시작하면 선도 이점을 누릴 수 있습니다.</div>
+        </div>
+        <div class="box">
+          <div class="box-title"><span class="c-gold">02</span> &nbsp;현장을 아는 사람이 필요</div>
+          <div class="box-body">AI 도입은 IT 부서 혼자 할 수 없습니다. 견적, 품질, 구매, 설계 — 각 현장을 아는 실무자가 직접 참여해야 진짜 변화가 생깁니다.</div>
+        </div>
+        <div class="box">
+          <div class="box-title"><span class="c-green">03</span> &nbsp;체계적 관리가 핵심</div>
+          <div class="box-body">TF는 부서별로 파편화된 AI 사용을 하나의 표준으로 통합하고, 보안과 성과를 동시에 관리합니다.</div>
+        </div>
+      </div>
+    `);
+  },
+
+  benefits() {
+    print(sectionHeader('TF 멤버에게 주어지는 것들', 'Benefits'));
+    print(`
+      <div class="grid-2">
+        <div class="box benefit-box">
+          <div class="box-title">🛠️ &nbsp;AI 유료 툴 전액 지원</div>
+          <div class="box-body">ChatGPT Plus, Claude Pro, Microsoft Copilot 등 본인 업무에 맞는 유료 AI 툴 구독료를 회사가 지원합니다.</div>
+          <div class="box-badge">월 최대 10만원</div>
+        </div>
+        <div class="box benefit-box gold">
+          <div class="box-title">📚 &nbsp;학습비 지원</div>
+          <div class="box-body">온라인 강의, AI 세미나 참가비, 관련 도서 구입비 등 자기계발 학습에 드는 비용을 지원합니다.</div>
+          <div class="box-badge" style="color:var(--gold)">1인 최대 20만원 / 활동 기간</div>
+        </div>
+        <div class="box benefit-box green">
+          <div class="box-title">📈 &nbsp;인사 고과 반영</div>
+          <div class="box-body">TF 활동 및 성과가 연간 인사 고과에 긍정적으로 반영됩니다.</div>
+          <div class="box-badge" style="color:var(--green)">연간 고과 반영</div>
+        </div>
+        <div class="box benefit-box purple">
+          <div class="box-title">🚀 &nbsp;사내 AI 전문가 트랙</div>
+          <div class="box-body">모범 사례 발굴 시 전사 대상 강의 기회 및 인센티브 획득 기회가 주어집니다.</div>
+          <div class="box-badge" style="color:var(--purple)">강의 기회 · 인센티브</div>
+        </div>
+      </div>
+    `);
+  },
+
+  departments() {
+    print(sectionHeader('부서별 AI 활용', 'Departments'));
+    print(`<div class="line c-muted" style="margin-bottom:12px; font-size:12px">부서명을 클릭하거나  <span class="c-accent">dept [부서명]</span>  을 입력하세요.</div>`);
+    const grid = Object.entries(DEPTS).map(([name, d], i) =>
+      `<div class="dept-btn" onclick="runCmd('dept ${name}')">
+        <div class="db-num">0${i+1}</div>
+        <div class="db-name">${name}</div>
+        <div class="db-sub">${d.sub.split('★')[0].trim()}</div>
+      </div>`
+    ).join('');
+    print(`<div class="dept-grid">${grid}</div>`);
+  },
+
+  dept(args) {
+    const name = args.join(' ');
+    const d = DEPTS[name];
+    if (!d) {
+      // fuzzy match
+      const match = DEPT_NAMES.find(n => n.includes(name) || name.includes(n.slice(0,2)));
+      if (match) { handlers.dept([match]); return; }
+      print(`<div class="error-box">부서를 찾을 수 없습니다: "${name}"<br>사용 가능: ${DEPT_NAMES.join(', ')}</div>`);
+      return;
+    }
+    print(sectionHeader(name, d.sub));
+    print(`
+      <div class="phase-table">
+        <div class="phase-row">
+          <div class="phase-label p1">즉시 효과<br><span style="font-size:9px; color:var(--dim)">1~3개월</span></div>
+          <div class="phase-items">${d.p1.map(i=>`<span>${i}</span>`).join('')}</div>
+        </div>
+        <div class="phase-row">
+          <div class="phase-label p2">중기 활용<br><span style="font-size:9px; color:var(--dim)">4~12개월</span></div>
+          <div class="phase-items">${d.p2.map(i=>`<span>${i}</span>`).join('')}</div>
+        </div>
+        <div class="phase-row">
+          <div class="phase-label p3">장기 변화<br><span style="font-size:9px; color:var(--dim)">1~3년</span></div>
+          <div class="phase-items">${d.p3.map(i=>`<span>${i}</span>`).join('')}</div>
+        </div>
+      </div>
+    `);
+    const others = DEPT_NAMES.filter(n=>n!==name);
+    print(`<div class="line c-muted" style="margin-top:12px; font-size:12px">다른 부서: ${others.map(n=>`<span class="link" onclick="runCmd('dept ${n}')">${n}</span>`).join('  |  ')}</div>`);
+  },
+
+  schedule() {
+    print(sectionHeader('모집 일정', 'Schedule'));
+    print(`
+      <div class="timeline">
+        <div class="tl-step">
+          <div class="tl-circle">01</div>
+          <div class="tl-title">공고 발표</div>
+          <div class="tl-date">2026. 02. 19</div>
+          <div class="tl-desc">전사 공지<br>공고문 배포</div>
+        </div>
+        <div class="tl-step">
+          <div class="tl-circle" style="border-color:var(--gold); color:var(--gold)">02</div>
+          <div class="tl-title">지원서 접수 마감</div>
+          <div class="tl-date" style="color:var(--gold)">2026. 02. 26</div>
+          <div class="tl-desc">이메일 제출<br>팀장 동의 포함</div>
+        </div>
+        <div class="tl-step">
+          <div class="tl-circle active">GO</div>
+          <div class="tl-title">TF 활동 시작</div>
+          <div class="tl-date">추후 공지</div>
+          <div class="tl-desc">킥오프 미팅<br>AI 기초 교육</div>
+        </div>
+      </div>
+    `);
+    print(`<div style="border:1px solid rgba(255,184,0,0.3); border-left:3px solid var(--gold); padding:10px 16px; margin-top:8px; background:rgba(255,184,0,0.04); border-radius:0 4px 4px 0; font-size:12px; color:var(--gold)">
+      마감: 2026년 2월 26일 (목)  ·  제출: joonsung.lee@amslighting.co.kr
+    </div>`);
+  },
+
+  apply() {
+    print(sectionHeader('지원 방법', 'How to Apply'));
+    printLines(
+      `<span class="c-muted">아래 항목을 포함한 지원서를 작성 후, 팀장 동의를 받아 이메일로 제출해주세요.</span>`,
+    );
+    print(divider());
+
+    // 양식 구조
+    print(`
+      <div class="form-section" style="margin-top:8px">
+        <div class="form-section-header accent">1  ·  기본 정보</div>
+        <div class="form-field">
+          <div class="field-key">성명</div><div class="field-val field-hint">이름을 기재해주세요</div>
+        </div>
+        <div class="form-field">
+          <div class="field-key">소속 부서</div><div class="field-val field-hint">글로벌전략팀 / 생산팀 / 기술연구소 / 개발팀 / 구매팀 / 품질팀 / 판매물류팀 / 관리팀</div>
+        </div>
+        <div class="form-field">
+          <div class="field-key">직급</div><div class="field-val field-hint">직급 및 직책</div>
+        </div>
+        <div class="form-field">
+          <div class="field-key">연락처</div><div class="field-val field-hint">연락 가능한 번호</div>
+        </div>
+        <div class="form-field">
+          <div class="field-key">이메일</div><div class="field-val field-hint">사내 이메일</div>
+        </div>
+      </div>
+
+      <div class="form-section" style="margin-top:12px">
+        <div class="form-section-header">2  ·  현재 AI 활용 현황</div>
+        <div class="form-field">
+          <div class="field-key">사용 도구</div><div class="field-val field-hint">ChatGPT / Claude / Copilot 등 (없어도 OK)</div>
+        </div>
+        <div class="form-field">
+          <div class="field-key">활용 목적</div><div class="field-val field-hint">문서 작성 / 번역 / 자료 조사 / 기타</div>
+        </div>
+        <div class="form-field">
+          <div class="field-key">경험 기술</div><div class="field-val field-hint">간단히 서술 (경험 없어도 무방)</div>
+        </div>
+      </div>
+
+      <div class="form-section" style="margin-top:12px">
+        <div class="form-section-header">3  ·  질문 사항</div>
+      </div>
+    `);
+
+    const qs = [
+      { n:'Q1', title:'개선하고 싶은 업무', hint:'지금 내 업무 중 AI로 바꾸고 싶은 것을 구체적으로 — 이 항목이 가장 중요합니다', accent: true },
+      { n:'Q2', title:'TF 지원 동기', hint:'솔직하게 작성해주세요' },
+      { n:'Q3', title:'TF 활동 이후 목표', hint:'본인·팀·회사 관점 중 하나 이상으로' },
+      { n:'Q4', title:'우려 사항', hint:'있다면 솔직하게 (없어도 됩니다)' },
+    ];
+    qs.forEach(q => {
+      print(`<div class="q-card ${q.accent?'':'q2'}">
+        <div class="q-num ${q.accent?'':'muted'}">${q.n}</div>
+        <div class="q-text">${q.title}</div>
+        <div class="q-hint">${q.hint}</div>
+      </div>`);
+    });
+
+    print(divider());
+    print(`
+      <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap">
+        <div>
+          <div class="line" style="font-size:11px; color:var(--muted); margin-bottom:6px">제출 이메일</div>
+          <div style="font-size:14px; color:var(--accent); font-weight:700">joonsung.lee@amslighting.co.kr</div>
+        </div>
+        <div>
+          <div class="line" style="font-size:11px; color:var(--muted); margin-bottom:6px">마감일</div>
+          <div style="font-size:14px; color:var(--gold); font-weight:700">2026년 2월 26일 (목)</div>
+        </div>
+        <a href="mailto:joonsung.lee@amslighting.co.kr?subject=AMS AI TF 1기 지원서 - [이름] [부서]"
+           style="margin-left:auto; background:var(--accent); color:#000; padding:10px 22px; border-radius:3px; text-decoration:none; font-weight:700; font-size:13px; font-family:var(--mono);">
+          이메일 바로 열기 →
+        </a>
+      </div>
+    `);
+  },
+
+  qa() {
+    print(sectionHeader('Q&A'));
+    const qas = [
+      { q:'AI를 전혀 모르는데 지원해도 되나요?', a:'됩니다. TF는 AI 전문가를 뽑는 것이 아닙니다. \'내 업무를 더 잘 하고 싶은 사람\'이 필요합니다. AI 기초 교육을 TF 활동 안에서 제공합니다.' },
+      { q:'본업이 바빠도 병행할 수 있나요?', a:'TF 활동은 본인 업무와 병행하는 방식으로 운영됩니다. 팀장과 사전 협의 후 참여하기 때문에 팀 업무에 무리가 없는 범위에서 진행합니다.' },
+      { q:'같은 부서에서 두 명이 지원하면?', a:'부서별 1명 원칙입니다. 동일 부서에서 2명 이상 지원 시 지원서(특히 Q1) 내용을 기준으로 1명을 선발합니다. 탈락 지원자는 2기 우선 선발 기회가 주어집니다.' },
+      { q:'TF 활동 이후에는 어떻게 되나요?', a:'원 소속 팀으로 복귀하되, 사내 AI 전문가로서 역할을 이어갑니다. 모범 사례를 만든 멤버는 전사 대상 강의 기회와 인센티브 기회가 주어집니다.' },
+      { q:'결과가 없으면 어떻게 되나요?', a:'TF는 \'실패해도 되는 실험실\'입니다. 효과가 없는 시도는 빠르게 중단하고 다른 방향을 찾는 것이 TF의 역할입니다. 실패를 두려워하지 않는 사람이 오히려 잘 맞습니다.' },
+    ];
+    qas.forEach((item, i) => {
+      print(`
+        <div style="margin-bottom:16px">
+          <div class="line" style="color:var(--text); font-weight:700; margin-bottom:6px">
+            <span class="c-accent" style="margin-right:10px">Q${i+1}</span>${item.q}
+          </div>
+          <div class="line c-muted" style="padding-left:28px; font-size:13px; line-height:1.8">${item.a}</div>
+        </div>
+      `);
+    });
+  },
+
+  clear() {
+    output.innerHTML = '';
+    bootSequence(false);
+  }
+};
+
+// ── 실행 ──────────────────────────────────────
+function runCmd(raw, echo=true) {
+  const trimmed = raw.trim();
+  if (!trimmed) return;
+
+  if (echo) {
+    printEcho(trimmed);
+    if (history[0] !== trimmed) history.unshift(trimmed);
+    histIdx = -1;
+    updateSidebar(trimmed.split(' ')[0]);
+  }
+
+  const parts = trimmed.split(/\s+/);
+  const cmd   = parts[0].toLowerCase();
+  const args  = parts.slice(1);
+
+  if (handlers[cmd]) {
+    try { handlers[cmd](args); }
+    catch(e) { print(`<div class="error-box">오류: ${e.message}</div>`); }
+  } else {
+    print(`<div class="error-box">알 수 없는 명령어: "${cmd}"  —  <span class="link" onclick="runCmd('help')">help</span> 를 입력해보세요.</div>`);
+  }
+
+  input.value = '';
+  hideAC();
+}
+
+function updateSidebar(cmd) {
+  document.querySelectorAll('.sb-cmd').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.sb-cmd').forEach(el => {
+    if (el.textContent.includes(cmd)) el.classList.add('active');
+  });
+}
+
+// ── 부팅 시퀀스 ───────────────────────────────
+function bootSequence(full=true) {
+  if (full) {
+    const lines = [
+      { html:`<div class="ascii">
+  ██████╗ ███╗   ███╗███████╗     █████╗ ██╗    ████████╗███████╗
+  ██╔══██╗████╗ ████║██╔════╝    ██╔══██╗██║       ██╔══╝██╔════╝
+  ███████║██╔████╔██║███████╗    ███████║██║       ██║   █████╗
+  ██╔══██║██║╚██╔╝██║╚════██║    ██╔══██║██║       ██║   ██╔══╝
+  ██║  ██║██║ ╚═╝ ██║███████║    ██║  ██║██║       ██║   ██║
+  ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝    ╚═╝  ╚═╝╚═╝       ╚═╝   ╚══════╝</div>`, delay:0 },
+      { html:`<div class="line c-muted" style="font-size:12px; margin-bottom:2px">  ams AI Task Force  ·  1기 모집  ·  2026</div>`, delay:400 },
+      { html:`<div class="line c-dim" style="font-size:11px; margin-bottom:16px">  ${'-'.repeat(72)}</div>`, delay:600 },
+      { html:`<div class="line" style="font-size:12px; margin-bottom:4px"><span class="c-muted">  시스템 초기화 중 ...</span> <span class="c-green">완료</span></div>`, delay:800 },
+      { html:`<div class="line" style="font-size:12px; margin-bottom:4px"><span class="c-muted">  모집 상태 확인 .........</span> <span class="c-green bold">OPEN</span></div>`, delay:1000 },
+      { html:`<div class="line" style="font-size:12px; margin-bottom:4px"><span class="c-muted">  접수 마감까지 .........</span> <span class="c-gold">2026. 02. 26</span></div>`, delay:1200 },
+      { html:`<div class="line c-dim" style="font-size:11px; margin:16px 0 8px">  ${'-'.repeat(72)}</div>`, delay:1400 },
+      { html:`<div class="line c-muted" style="font-size:13px; margin-bottom:6px">  <span class="c-accent bold">help</span>  를 입력하면 시작됩니다.</div>`, delay:1600 },
+    ];
+    lines.forEach(({ html, delay }) => {
+      setTimeout(() => { print(html); output.scrollTop = output.scrollHeight; }, delay);
+    });
+    setTimeout(() => input.focus(), 1800);
+  } else {
+    print(`<div class="line c-dim" style="font-size:12px; margin-bottom:4px">[screen cleared]</div>`);
+    print(`<div class="line c-muted" style="font-size:12px"><span class="c-accent">help</span> 를 입력하면 시작됩니다.</div>`);
+  }
+}
+
+// ── 자동완성 ──────────────────────────────────
+function getMatches(val) {
+  if (!val) return [];
+  const lower = val.toLowerCase();
+  const res = [];
+
+  // dept 자동완성
+  if (lower.startsWith('dept ')) {
+    const q = val.slice(5);
+    DEPT_NAMES.filter(n => n.includes(q)).forEach(n =>
+      res.push({ cmd:`dept ${n}`, desc:DEPTS[n].sub.split('★')[0].trim() })
+    );
+    return res;
+  }
+
+  COMMANDS.filter(c => c.cmd.startsWith(lower)).forEach(c => res.push(c));
+  return res;
+}
+
+function showAC(matches) {
+  if (!matches.length) { hideAC(); return; }
+  acIdx = -1;
+  ac.innerHTML = matches.map((m,i) =>
+    `<div class="ac-item" data-cmd="${m.cmd}" onclick="selectAC('${m.cmd}')">
+      <span class="ac-cmd">${m.cmd}</span>
+      <span class="ac-desc">${m.desc}</span>
+    </div>`
+  ).join('');
+  ac.style.display = 'block';
+}
+
+function hideAC() { ac.style.display = 'none'; acIdx = -1; }
+
+function selectAC(cmd) {
+  input.value = cmd + ' ';
+  hideAC();
+  input.focus();
+}
+
+function moveAC(dir) {
+  const items = ac.querySelectorAll('.ac-item');
+  if (!items.length) return;
+  items.forEach(el => el.classList.remove('selected'));
+  acIdx = (acIdx + dir + items.length) % items.length;
+  items[acIdx].classList.add('selected');
+  input.value = items[acIdx].dataset.cmd;
+}
+
+// ── 이벤트 ────────────────────────────────────
+input.addEventListener('input', () => {
+  const val = input.value.trim();
+  showAC(getMatches(val));
+});
+
+input.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const val = input.value.trim();
+    if (ac.style.display === 'block' && acIdx >= 0) {
+      const sel = ac.querySelectorAll('.ac-item')[acIdx];
+      if (sel) { input.value = sel.dataset.cmd; hideAC(); return; }
+    }
+    if (val) runCmd(val);
+    else hideAC();
+    return;
+  }
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    const matches = getMatches(input.value.trim());
+    if (matches.length === 1) { input.value = matches[0].cmd + ' '; hideAC(); }
+    else if (matches.length > 1) { showAC(matches); moveAC(1); }
+    return;
+  }
+  if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    if (ac.style.display === 'block') { moveAC(-1); return; }
+    if (histIdx < history.length - 1) { histIdx++; input.value = history[histIdx]; }
+    return;
+  }
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    if (ac.style.display === 'block') { moveAC(1); return; }
+    if (histIdx > 0) { histIdx--; input.value = history[histIdx]; }
+    else { histIdx = -1; input.value = ''; }
+    return;
+  }
+  if (e.key === 'Escape') { hideAC(); }
+});
+
+document.addEventListener('click', e => {
+  if (!ac.contains(e.target) && e.target !== input) hideAC();
+});
+
+// 터미널 영역 클릭 시 포커스
+document.getElementById('terminal-wrap').addEventListener('click', () => input.focus());
+
+// ── 시작 ──────────────────────────────────────
+bootSequence(true);
+</script>
+</body>
+</html>

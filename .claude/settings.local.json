@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C \"C:/coding/AI_TF/TF_recruit\" log --oneline)",
+      "Bash(start \"C:/coding/AI_TF/TF_recruit/ams_tf_v3_mobile.html\")",
+      "WebFetch(domain:vibelabs.hashed.com)",
+      "Bash(python3:*)"
+    ]
+  }
+}
