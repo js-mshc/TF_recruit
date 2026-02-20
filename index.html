@@ -49,6 +49,9 @@ body::before {
   background:var(--bg2); border-bottom:1px solid var(--border);
   padding:10px 16px; display:flex; align-items:center; gap:8px; flex-shrink:0;
 }
+@media (min-width: 769px) {
+  #chrome { padding-left: 25%; padding-right: 25%; }
+}
 .dot { width:11px; height:11px; border-radius:50%; }
 .dr{background:#FF5F57} .dy{background:#FEBC2E} .dg{background:#28C840}
 .chrome-title { margin-left:8px; font-size:12px; color:var(--muted); }
@@ -59,7 +62,7 @@ body::before {
   padding:20px 16px 76px; -webkit-overflow-scrolling:touch;
 }
 @media (min-width: 769px) {
-  #main { padding-left: 25%; padding-right: 8%; }
+  #main { padding-left: 25%; padding-right: 25%; }
 }
 #main::-webkit-scrollbar { width:3px; }
 #main::-webkit-scrollbar-thumb { background:var(--border2); border-radius:2px; }
@@ -78,6 +81,9 @@ body::before {
   z-index:500;
   box-shadow:0 -8px 40px rgba(0,0,0,.8), 0 0 0 1px rgba(56,189,248,.15);
   overflow:hidden;
+}
+@media (min-width: 769px) {
+  #menu-overlay { left: 25%; right: 25%; }
 }
 #menu-overlay.show { display:block; }
 
@@ -113,7 +119,7 @@ body::before {
   padding:11px 16px; display:flex; align-items:center; gap:10px;
 }
 @media (min-width: 769px) {
-  #input-bar { padding-left: 25%; padding-right: 8%; }
+  #input-bar { padding-left: 25%; padding-right: 25%; }
 }
 .prompt-sym { color:var(--accent); font-size:14px; flex-shrink:0; font-weight:700; }
 #cmd-input {
@@ -152,8 +158,8 @@ body::before {
   100% { background-position:  300% center; }
 }
 .logo-ascii {
-  font-family: 'Courier New', Courier, monospace;
-  font-size: clamp(7px, 2.4vw, 11px);
+  font-family: 'Courier New', Courier, 'Lucida Console', 'DejaVu Sans Mono', monospace;
+  font-size: clamp(5.5px, 2.2vw, 11px);
   letter-spacing: 0;
   background: linear-gradient(90deg,
     var(--accent2) 0%,
@@ -170,39 +176,6 @@ body::before {
   animation: logo-shimmer 14s ease-in-out infinite;
   display: block; overflow-x: hidden;
 }
-@media (max-width: 768px) {
-  .logo-ascii { display: none; }
-}
-
-/* ── MOBILE LOGO ── */
-.logo-mobile {
-  display: none;
-  margin-bottom: 4px;
-  line-height: 1.3;
-}
-@media (max-width: 768px) {
-  .logo-mobile { display: block; }
-}
-.lm-ams, .lm-mshc {
-  display: block;
-  font-family: var(--mono);
-  font-weight: 700;
-  letter-spacing: .25em;
-  background: linear-gradient(90deg,
-    var(--accent2) 0%,
-    var(--accent2) 35%,
-    #7dcfef 46%, #a8dff5 50%, #7dcfef 54%,
-    var(--accent2) 65%,
-    var(--accent2) 100%
-  );
-  background-size: 300% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: logo-shimmer 14s ease-in-out infinite;
-}
-.lm-ams  { font-size: 38px; }
-.lm-mshc { font-size: 28px; }
 
 .logo-sub { font-size:11px; color:var(--accent); margin-bottom:22px; }
 
@@ -519,7 +492,6 @@ function buildHome() {
   var lines = [
     { html: '<div class="tagline-box">회사의 일하는 방식을 바꿀 동료를 찾습니다</div>', d: 120 },
     { html: '<pre class="logo-ascii">█████╗  ███╗   ███╗ ███████╗\n██╔══██╗████╗ ████║ ██╔════╝\n███████║██╔████╔██║ ███████╗\n██╔══██║██║╚██╔╝██║ ╚════██║\n██║  ██║██║ ╚═╝ ██║ ███████║\n╚═╝  ╚═╝╚══╝   ╚══╝╚══════╝\n────────────────────────────────────\n███╗   ███╗███████╗██╗  ██╗ ██████╗\n████╗ ████║██╔════╝██║  ██║██╔════╝\n██╔████╔██║███████╗███████║██║     \n██║╚██╔╝██║╚════██║██╔══██║██║     \n██║ ╚═╝ ██║███████║██║  ██║╚██████╗\n╚══╝   ╚══╝╚══════╝╚═╝  ╚═╝ ╚═════╝</pre>', d: 200 },
-    { html: '<div class="logo-mobile"><span class="lm-ams">AMS</span><span class="lm-mshc">MSHC</span></div>', d: 200 },
     { html: '<div class="logo-sub">AI Task Force 1기 모집 · 2026</div>', d: 160 },
     { html: '<div class="divider-line">1st Cohort 2026 · AI Task Force</div>', d: 140 },
     { html: '<div class="bullet-line">· 경력 · 직급 무관, 의지가 있으면 됩니다.</div>', d: 130 },
